@@ -358,7 +358,7 @@ while True:
     
         zero = time.time()
 
-    cv2.destroyAllWindows
+    cv2.destroyAllWindows()
 
     i = i + 1
     
