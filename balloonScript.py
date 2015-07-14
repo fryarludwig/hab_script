@@ -10,7 +10,11 @@ import serial
 import math
 import smbus
 import RPi.GPIO as GPIO
+import time
 from time import sleep
+import os
+import numpy
+import cv2
 
 RADIO_CALLSIGN = "HAB"
 RADIO_SERIAL_PORT = "/dev/ttyS1" # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
@@ -313,3 +317,48 @@ class balloonScript():
 
 if __name__ == '__main__':
 	runScript = balloonScript()
+	
+	
+i = 0
+snapCount = 0
+while os.path.isfile('Balloon' + str(i) + '.avi') == True:
+    i = i + 1
+    print i
+    
+def snapshot():
+    ret, frame = camBalloon.read()
+    cv2.imwrite('snapshot' + str(snapCount) + '.png', frame)
+    snapCount = snapCount + 1
+
+camOut = cv2.VideoCapture(0)
+camBalloon = cv2.VideoCapture(1)
+
+while True:
+    zero = time.time()
+    fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
+    outOut = cv2.VideoWriter('Outside' + str(i) + '.avi', fourcc, 5.0, (640,480))
+    outBalloon = cv2.VideoWriter('Balloon' + str(i) + '.avi', fourcc, 5.0, (640,480))
+
+    if camOut.isOpened() == False:
+        camOut.open()
+
+    if camBalloon.isOpened() == False:
+        camBalloon.open()
+
+    while (time.time() - zero) < 120:
+        ret, frame = camOut.read()
+        outOut.write(frame)
+        #cv2.imshow('Outside' + str(i),frame)
+        cv2.waitKey(1)
+        
+        ret, frame = camBalloon.read()
+        outBalloon.write(frame)
+        #cv2.imshow('Balloon' + str(i),frame)
+        cv2.waitKey(1)
+    
+        zero = time.time()
+
+    cv2.destroyAllWindows
+
+    i = i + 1
+    
