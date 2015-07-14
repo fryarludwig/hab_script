@@ -146,7 +146,7 @@ class balloonScript():
 			rawValPiTemp = bus.read_byte_data(address, registerTrpi)
 			VTrpi = rawValPiTemp * Vin / maxAD
 			Rrpi = 51800 * ((Vin/VTrpi) - 1)
-			calculatedPiTemp = 1/((.0014721) + (.000237288 * (math.log(Rrpi))) + ((.00000010792 * (math.log(Rrpi))) ** 3)) - 273.15
+			calculatedPiTemp = 1/((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15
 			self.fTrpi = open('temp_raspi.txt','a')
 			self.fTrpi.write(str(VTrpi) + ' ' + str(calculatedPiTemp) + '\n')
 			self.fTrpi.close()
@@ -157,7 +157,7 @@ class balloonScript():
 			rawValExternalTemp = bus.read_byte_data(address, registerText)
 			VText = rawValExternalTemp * 3.3 / 255
 			Rext = 51800 * ((Vin/VText) - 1)
-			calculatedExternalTemp = 1/((.0014721) + (.000237288 * (math.log(Rext))) + ((.00000010792 * (math.log(Rext))) ** 3)) - 273.15
+			calculatedExternalTemp = 1/((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15
 			self.fText = open('temp_external.txt','a')
 			self.fText.write(str(VText) + ' ' + str(calculatedExternalTemp) + '\n')
 			self.fText.close()
@@ -168,7 +168,7 @@ class balloonScript():
 			rawValBatteryTemp = bus.read_byte_data(address, registerTbat)
 			VTbat = rawValBatteryTemp * 3.3 / 255
 			Rbat = 51800 * ((Vin/VTbat) - 1)
-			calculatedBatteryTemp = 1/((.0014721) + (.000237288 * (math.log(Rbat))) + ((.00000010792 * (math.log(Rbat))) ** 3)) - 273.15
+			calculatedBatteryTemp = 1/((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15
 			self.fTbat = open('temp_batteries.txt','a')
 			self.fTbat.write(str(VTbat) + ' ' + str(calculatedBatteryTemp) + '\n')
 			self.fTbat.close()
