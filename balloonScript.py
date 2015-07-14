@@ -184,7 +184,7 @@ class balloonScript():
 		except:
 			calculatedVoltageBattery = "NO_VAL"
 	
-		return "{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery)
+		return ",{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery)
 			
 	def gpsSerialInput(self):
 		messageReceived = "NO_GPS_DATA\n"
