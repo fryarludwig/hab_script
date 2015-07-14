@@ -147,7 +147,7 @@ class balloonScript():
 		calculatedVoltageBattery = 0
 		
 		try:
-			rawValPiTemp = bus.read_byte_data(address, registerTrpi)
+			rawValPiTemp = bus.read_byte_data(address, registerTrpi) #4604
 			VTrpi = rawValPiTemp * Vin / maxAD
 			Rrpi = 51800 * ((Vin/VTrpi) - 1)
 			calculatedPiTemp = 1/((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15
@@ -158,7 +158,7 @@ class balloonScript():
 			calculatedPiTemp = "NO_VAL"
 		
 		try:
-			rawValExternalTemp = bus.read_byte_data(address, registerText)
+			rawValExternalTemp = bus.read_byte_data(address, registerText) #4599
 			VText = rawValExternalTemp * 3.3 / 255
 			Rext = 51800 * ((Vin/VText) - 1)
 			calculatedExternalTemp = 1/((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15
@@ -169,7 +169,7 @@ class balloonScript():
 			calculatedExternalTemp = "NO_VAL"
 		
 		try:
-			rawValBatteryTemp = bus.read_byte_data(address, registerTbat)
+			rawValBatteryTemp = bus.read_byte_data(address, registerTbat) #4600
 			VTbat = rawValBatteryTemp * 3.3 / 255
 			Rbat = 51800 * ((Vin/VTbat) - 1)
 			calculatedBatteryTemp = 1/((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15
