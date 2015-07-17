@@ -1,7 +1,9 @@
 """
+
 Changelog:
 07/14/15 - KFL: Merged balloon script files, removed unused functions
 				Refactored serial input/output. Changes not tested.
+				
 """
 
 from __future__ import print_function
@@ -38,14 +40,17 @@ maxAD = 255
 bus = smbus.SMBus(1)
 address = 0x48
 
-registerTrpi = 0x84 #ADC pin 0
-registerText = 0xc4 #ADC pin 1
-registerTbat = 0x94 #ADC pin 2
-registerVbat = 0xa4 #ADC pin 4
-
+registerTrpi = 0x84 #ADC CH 0
+registerText = 0xc4 #ADC CH 1
+registerTbat = 0x94 #ADC CH 2
+registerVbat = 0xa4 #ADC CH 4
+registerRH = 0xa4   #ADC CH 4
 	
 """
-TODO: Refactor serial in and out to match MoGS implementation
+TODO:
+-Refactor serial in and out to match MoGS implementation
+-Change registerVbat to ADC CH 3
+
 """
 class balloonScript():
 	def __init__(self):
@@ -69,6 +74,10 @@ class balloonScript():
 			self.fVbat = open('voltage_batteries.txt','a')
 		except:
 			self.fVbat = open('voltage_batteries.txt','w')
+		try:
+			self.fRH = open('humidity.txt','a')
+		except:
+			self.fRH = open('humidity.txt','w')
 		
 		# Open serial ports
 		self.radioSerialPort = None
