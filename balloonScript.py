@@ -34,6 +34,7 @@ LONG_SLEEP_DURATION = 1
 HEARTBEAT_INTERVAL = 100
 
 Vin = 3.3
+Vsupply = 5
 maxAD = 255
 
 bus = smbus.SMBus(1)
@@ -43,15 +44,15 @@ registerTrpi = 0x84  # ADC CH 0
 registerText = 0xc4  # ADC CH 1
 registerTbat = 0x94  # ADC CH 2
 registerVbat = 0xd4  # ADC CH 3
-registerRH = 0xa4  # ADC CH 4
+registerRH   = 0xa4  # ADC CH 4
 
 """
 TODO: Refactor serial in and out to match MoGS implementation
-TODO: Startup Sequence
-TODO: Implement servo code (in/out)
-TODO: Obfuscate balloon release
+TODO: StartupÂ Sequence
+TODO: ImplementÂ servoÂ code (in/out)
+TODO: ObfuscateÂ balloonÂ release
 TODO: Set release based on altitude
-TODO: More logging
+TODO: MoreÂ logging
 TODO: Check serial port buffering
 """
 class balloonScript():
@@ -176,6 +177,7 @@ class balloonScript():
 		calculatedExternalTemp = 0
 		calculatedBatteryTemp = 0
 		calculatedVoltageBattery = 0
+		calculatedRHValue = 0
 
 		try:
 			rawValPiTemp = bus.read_byte_data(address, registerTrpi)  # 4604
@@ -218,6 +220,15 @@ class balloonScript():
 			self.fVbat.close()
 		except:
 			calculatedVoltageBattery = "NO_VAL"
+		
+		try:
+			rawValRH = bus.read_byte_data(address, registerRH)
+			VRH = rawValRH * 3.3 * ((10.1 + 38.9) / 38.9) / 255
+			RHApprox = ((VRH / Vsupply) - .16) / .0062
+			calculatedRHValue = "%4.1f" % (RHApprox) / (1.0546 - (.00216 * calculatedPiTemp))
+			self.fRH = open('humidity.txt', 'a')
+			self.fRH.write(str(rawValRH) + ' ' + calculatedRHValue + '\n')
+			self.fRH.close()
 
 		return ",{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery)
 
