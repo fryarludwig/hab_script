@@ -143,7 +143,7 @@ class balloonScript():
 		if (dataString == "NO DATA" and gpsSplit == "0,0,0,0"):
 			int ("INVALID DATA STRINGS GIVEN")
 		else:
-			finalDataString = currGpsString + dataString + "\n"
+			finalDataString = currGpsString + dataString
 	
 		return finalDataString
 	
@@ -159,7 +159,7 @@ class balloonScript():
 			Rrpi = 51800 * ((Vin/VTrpi) - 1)
 			calculatedPiTemp = "%4.1f" % (1/((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
 			self.fTrpi = open('temp_raspi.txt','a')
-			self.fTrpi.write(str(VTrpi) + ' ' + str(calculatedPiTemp) + '\n')
+			self.fTrpi.write(str(VTrpi) + ' ' + calculatedPiTemp + '\n')
 			self.fTrpi.close()
 		except:
 			calculatedPiTemp = "NO_VAL"
@@ -170,7 +170,7 @@ class balloonScript():
 			Rext = 51800 * ((Vin/VText) - 1)
 			calculatedExternalTemp = "%4.1f" % (1/((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15)
 			self.fText = open('temp_external.txt','a')
-			self.fText.write(str(VText) + ' ' + str(calculatedExternalTemp) + '\n')
+			self.fText.write(str(VText) + ' ' + calculatedExternalTemp + '\n')
 			self.fText.close()
 		except:
 			calculatedExternalTemp = "NO_VAL"
@@ -181,7 +181,7 @@ class balloonScript():
 			Rbat = 51800 * ((Vin/VTbat) - 1)
 			calculatedBatteryTemp = "%4.1f" % ((1/((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15))
 			self.fTbat = open('temp_batteries.txt','a')
-			self.fTbat.write(str(VTbat) + ' ' + str(calculatedBatteryTemp) + '\n')
+			self.fTbat.write(str(VTbat) + ' ' + calculatedBatteryTemp + '\n')
 			self.fTbat.close()
 		except:
 			calculatedBatteryTemp = "NO_VAL"
@@ -190,7 +190,7 @@ class balloonScript():
 			rawValBatteryVoltage = bus.read_byte_data(address, registerVbat)
 			calculatedVoltageBattery = "%4.1f" % (.05155 * rawValBatteryVoltage + .18659)
 			self.fVbat = open('voltage_batteries.txt','a')
-			self.fVbat.write(str(rawValBatteryVoltage) + ' ' + str(calculatedVoltageBattery) + '\n')
+			self.fVbat.write(str(rawValBatteryVoltage) + ' ' + calculatedVoltageBattery + '\n')
 			self.fVbat.close()
 		except:
 			calculatedVoltageBattery = "NO_VAL"
@@ -234,7 +234,7 @@ class balloonScript():
 				sleep(1)
 			while(self.radioSerialPort.inWaiting()):
 				serialInput += self.radioSerialPort.readline()
-			print("Serial Input: " + serialInput)
+			print(len("Serial Input: " + serialInput))
 		except:
 			print("Unable to open serial port for input on " + RADIO_SERIAL_PORT)
 			
@@ -242,8 +242,8 @@ class balloonScript():
 	
 	def sendSerialOutput(self, line):
 		try:
-                        print(RADIO_CALLSIGN + "," + line + "\n")
-			line = self.radioSerialPort.write(RADIO_CALLSIGN + "," + line + "\n")
+                        print(RADIO_CALLSIGN + "," + line + ",END_TX\n")
+			line = self.radioSerialPort.write(RADIO_CALLSIGN + "," + line + ",END_TX\n")
 		except:
 			print("Unable to write to serial port on " + RADIO_SERIAL_PORT)
 	
