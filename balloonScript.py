@@ -16,17 +16,16 @@ import time
 from time import sleep
 import os
 import numpy
-import cv2
 
 RADIO_CALLSIGN = "HAB"
-RADIO_SERIAL_PORT = "/dev/ttyS1" # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
+RADIO_SERIAL_PORT = "/dev/ttyUSB0" # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
 RADIO_BAUDRATE = 9600
 
 GPS_LOG_FILE_LOCATION = r"logData/gps_log.txt"
 SCRIPT_LOG_FILE_LOCATION = r"logData/balloon_script_log.txt"
 TELEMETRY_FILE_BASE = r"logData/dictionary.txt"
 
-GPS_SERIAL_PORT = "/dev/ttyS0"
+GPS_SERIAL_PORT = "/dev/ttyAMA0"
 GPS_BAUDRATE = 4800
 GPS_LEN_IN_BYTES = 75
 
@@ -43,8 +42,8 @@ address = 0x48
 registerTrpi = 0x84 #ADC CH 0
 registerText = 0xc4 #ADC CH 1
 registerTbat = 0x94 #ADC CH 2
-registerVbat = 0xa4 #ADC CH 4
-registerRH = 0xa4   #ADC CH 4
+registerVbat = 0xd4 #ADC CH 3
+registerRH   = 0xa4 #ADC CH 4
 	
 """
 TODO:
@@ -102,10 +101,9 @@ class balloonScript():
 				self.gpsLog.writelines(messageToSend)
 				print("Serial: " + messageToSend)
 			except:
-				messageToSend = ""
-				messageToSend += self.telemetryFile.readline()
-				print("File: " + messageToSend)
-				self.sendSerialOutput(messageToSend)
+                                self.openRadioSerialPort()
+                                self.openGpsSerialPort()
+				print("Caught exception in main loop.")
 				
 			self.scriptLog.write(messageToSend)
 			
@@ -159,7 +157,7 @@ class balloonScript():
 			rawValPiTemp = bus.read_byte_data(address, registerTrpi) #4604
 			VTrpi = rawValPiTemp * Vin / maxAD
 			Rrpi = 51800 * ((Vin/VTrpi) - 1)
-			calculatedPiTemp = 1/((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15
+			calculatedPiTemp = "%4.1f" % (1/((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
 			self.fTrpi = open('temp_raspi.txt','a')
 			self.fTrpi.write(str(VTrpi) + ' ' + str(calculatedPiTemp) + '\n')
 			self.fTrpi.close()
@@ -170,7 +168,7 @@ class balloonScript():
 			rawValExternalTemp = bus.read_byte_data(address, registerText) #4599
 			VText = rawValExternalTemp * 3.3 / 255
 			Rext = 51800 * ((Vin/VText) - 1)
-			calculatedExternalTemp = 1/((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15
+			calculatedExternalTemp = "%4.1f" % (1/((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15)
 			self.fText = open('temp_external.txt','a')
 			self.fText.write(str(VText) + ' ' + str(calculatedExternalTemp) + '\n')
 			self.fText.close()
@@ -181,7 +179,7 @@ class balloonScript():
 			rawValBatteryTemp = bus.read_byte_data(address, registerTbat) #4600
 			VTbat = rawValBatteryTemp * 3.3 / 255
 			Rbat = 51800 * ((Vin/VTbat) - 1)
-			calculatedBatteryTemp = 1/((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15
+			calculatedBatteryTemp = "%4.1f" % ((1/((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15))
 			self.fTbat = open('temp_batteries.txt','a')
 			self.fTbat.write(str(VTbat) + ' ' + str(calculatedBatteryTemp) + '\n')
 			self.fTbat.close()
@@ -190,12 +188,13 @@ class balloonScript():
 		
 		try:
 			rawValBatteryVoltage = bus.read_byte_data(address, registerVbat)
-			calculatedVoltageBattery = .05155 * rawValBatteryVoltage + .18659
+			calculatedVoltageBattery = "%4.1f" % (.05155 * rawValBatteryVoltage + .18659)
 			self.fVbat = open('voltage_batteries.txt','a')
 			self.fVbat.write(str(rawValBatteryVoltage) + ' ' + str(calculatedVoltageBattery) + '\n')
 			self.fVbat.close()
 		except:
 			calculatedVoltageBattery = "NO_VAL"
+                
 	
 		return ",{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery)
 			
@@ -243,6 +242,7 @@ class balloonScript():
 	
 	def sendSerialOutput(self, line):
 		try:
+                        print(RADIO_CALLSIGN + "," + line + "\n")
 			line = self.radioSerialPort.write(RADIO_CALLSIGN + "," + line + "\n")
 		except:
 			print("Unable to write to serial port on " + RADIO_SERIAL_PORT)
@@ -328,46 +328,3 @@ if __name__ == '__main__':
 	runScript = balloonScript()
 	
 	
-i = 0
-snapCount = 0
-while os.path.isfile('Balloon' + str(i) + '.avi') == True:
-    i = i + 1
-    print i
-    
-def snapshot():
-    ret, frame = camBalloon.read()
-    cv2.imwrite('snapshot' + str(snapCount) + '.png', frame)
-    snapCount = snapCount + 1
-
-camOut = cv2.VideoCapture(0)
-camBalloon = cv2.VideoCapture(1)
-
-while True:
-    zero = time.time()
-    fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
-    outOut = cv2.VideoWriter('Outside' + str(i) + '.avi', fourcc, 5.0, (640,480))
-    outBalloon = cv2.VideoWriter('Balloon' + str(i) + '.avi', fourcc, 5.0, (640,480))
-
-    if camOut.isOpened() == False:
-        camOut.open()
-
-    if camBalloon.isOpened() == False:
-        camBalloon.open()
-
-    while (time.time() - zero) < 120:
-        ret, frame = camOut.read()
-        outOut.write(frame)
-        #cv2.imshow('Outside' + str(i),frame)
-        cv2.waitKey(1)
-        
-        ret, frame = camBalloon.read()
-        outBalloon.write(frame)
-        #cv2.imshow('Balloon' + str(i),frame)
-        cv2.waitKey(1)
-    
-        zero = time.time()
-
-    cv2.destroyAllWindows()
-
-    i = i + 1
-    
