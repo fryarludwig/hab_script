@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """
 
 Changelog:
@@ -6,16 +8,27 @@ Changelog:
 07/14/15 - KFL: Updated a few things, changed GPS parsing
 """
 
-from __future__ import print_function
+"""
+
+Misc. Notes:
+
+- If i2c directory is not found:
+        - Enable through raspi-config
+        - Edit /etc/modules and add these two lines: "i2c-bcm2708" and "i2c-dev"
+        - Reboot
+
+
+"""
+
+
 
 import serial
 import math
 import smbus
-import RPi.GPIO as GPIO
-import time
-from time import sleep
 import os
 import numpy
+import RPi.GPIO as GPIO
+import time
 
 RADIO_CALLSIGN = "HAB"
 RADIO_SERIAL_PORT = "/dev/ttyS1"  # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
@@ -49,45 +62,44 @@ registerAccX = 0xe4  # ADC CH 5
 registerAccY = 0xb4  # ADC CH 6
 registerAccZ = 0xf4  # ADC CH 7
 
-"""
-TODO: Refactor serial in and out to match MoGS implementation
-TODO: Startup Sequence
-TODO: Implement servo code (in/out)
-TODO: Obfuscate balloon release
-TODO: Set release based on altitude
-TODO: More logging
-TODO: Check serial port buffering
-"""
 class balloonScript():
 	def __init__(self):
 		# Open output files
-		self.scriptLog = open(SCRIPT_LOG_FILE_LOCATION, "a")
-		self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
 
 		try:
-			self.fTrpi = open('logData/temp_raspi.txt', 'a')
-		except:
-			self.fTrpi = open('logData/temp_raspi.txt', 'w')
+                        self.scriptLog = open(SCRIPT_LOG_FILE_LOCATION, "a")
+                except:
+                        self.gpsLog = open(SCRIPT_LOG_FILE_LOCATION, "w")
+                        
+                try:
+                        self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
+                except:
+                        self.gpsLog = open(GPS_LOG_FILE_LOCATION, "w")
+                        
 		try:
-			self.fText = open('logData/temp_external.txt', 'a')
+			self.fTrpi = open('sensorData/temp_raspi.txt', 'a')
 		except:
-			self.fText = open('logData/temp_external.txt', 'w')
+			self.fTrpi = open('sensorData/temp_raspi.txt', 'w')
 		try:
-			self.fTbat = open('logData/temp_batteries.txt', 'a')
+			self.fText = open('sensorData/temp_external.txt', 'a')
 		except:
-			self.fTbat = open('logData/temp_batteries.txt', 'w')
+			self.fText = open('sensorData/temp_external.txt', 'w')
 		try:
-			self.fVbat = open('logData/voltage_batteries.txt', 'a')
+			self.fTbat = open('sensorData/temp_batteries.txt', 'a')
 		except:
-			self.fVbat = open('logData/voltage_batteries.txt', 'w')
+			self.fTbat = open('sensorData/temp_batteries.txt', 'w')
 		try:
-			self.fRH   = open('logData/humidity.txt', 'a')
+			self.fVbat = open('sensorData/voltage_batteries.txt', 'a')
 		except:
-			self.fRH   = open('logData/humidity.txt', 'w')
+			self.fVbat = open('sensorData/voltage_batteries.txt', 'w')
 		try:
-			self.fAcc  = open('logData/accelerometer.txt', 'a')
+			self.fRH   = open('sensorData/humidity.txt', 'a')
 		except:
-			self.fAcc  = open('logData/accelerometer.txt', 'w')
+			self.fRH   = open('sensorData/humidity.txt', 'w')
+		try:
+			self.fAcc  = open('sensorData/accelerometer.txt', 'a')
+		except:
+			self.fAcc  = open('sensorData/accelerometer.txt', 'w')
 		
 		
 		# Open serial ports
@@ -116,11 +128,6 @@ class balloonScript():
 				self.openRadioSerialPort()
 				self.openGpsSerialPort()
 				print("Caught exception in main loop.")
-
-				messageToSend = ""
-				messageToSend += self.telemetryFile.readline()
-				print("File: " + messageToSend)
-				self.sendSerialOutput(messageToSend)
 
 			self.scriptLog.write(messageToSend)
 
@@ -195,8 +202,9 @@ class balloonScript():
 			rawValPiTemp = bus.read_byte_data(address, registerTrpi)  # 4604
 			VTrpi = rawValPiTemp * Vin / maxAD
 			Rrpi = 51800 * ((Vin / VTrpi) - 1)
+                        PiTempRHPurpose = (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
 			calculatedPiTemp = "%4.1f" % (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
-			self.fTrpi = open('temp_raspi.txt', 'a')
+			self.fTrpi = open('sensorData/temp_raspi.txt', 'a')
 			self.fTrpi.write(str(VTrpi) + ' ' + calculatedPiTemp + '\n')
 			self.fTrpi.close()
 		except:
@@ -207,18 +215,18 @@ class balloonScript():
 			VText = rawValExternalTemp * 3.3 / 255
 			Rext = 51800 * ((Vin / VText) - 1)
 			calculatedExternalTemp = "%4.1f" % (1 / ((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15)
-			self.fText = open('temp_external.txt', 'a')
+			self.fText = open('sensorData/temp_external.txt', 'a')
 			self.fText.write(str(VText) + ' ' + calculatedExternalTemp + '\n')
 			self.fText.close()
 		except:
 			calculatedExternalTemp = "NO_VAL"
-
+                        
 		try:
 			rawValBatteryTemp = bus.read_byte_data(address, registerTbat)  # 4600
 			VTbat = rawValBatteryTemp * 3.3 / 255
 			Rbat = 51800 * ((Vin / VTbat) - 1)
 			calculatedBatteryTemp = "%4.1f" % ((1 / ((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15))
-			self.fTbat = open('temp_batteries.txt', 'a')
+			self.fTbat = open('sensorData/temp_batteries.txt', 'a')
 			self.fTbat.write(str(VTbat) + ' ' + calculatedBatteryTemp + '\n')
 			self.fTbat.close()
 		except:
@@ -227,7 +235,7 @@ class balloonScript():
 		try:
 			rawValBatteryVoltage = bus.read_byte_data(address, registerVbat)
 			calculatedVoltageBattery = "%4.1f" % (.05155 * rawValBatteryVoltage + .18659)
-			self.fVbat = open('voltage_batteries.txt', 'a')
+			self.fVbat = open('sensorData/voltage_batteries.txt', 'a')
 			self.fVbat.write(str(rawValBatteryVoltage) + ' ' + calculatedVoltageBattery + '\n')
 			self.fVbat.close()
 		except:
@@ -237,23 +245,25 @@ class balloonScript():
 			rawValRH = bus.read_byte_data(address, registerRH)
 			VRH = rawValRH * 3.3 * ((10.1 + 38.9) / 38.9) / 255
 			RHApprox = ((VRH / Vsupply) - .16) / .0062
-			calculatedRHValue = "%4.1f" % (RHApprox) / (1.0546 - (.00216 * calculatedPiTemp))
-			self.fRH = open('humidity.txt', 'a')
+			calculatedRHValue = "%4.1f" % ((RHApprox) / (1.0546 - (.00216 * PiTempRHPurpose)))
+			self.fRH = open('sensorData/humidity.txt', 'a')
 			self.fRH.write(str(rawValRH) + ' ' + calculatedRHValue + '\n')
 			self.fRH.close()
 		except:
 			calculatedRHValue = "NO_VAL"
+			
 		try:
-			rawAccelX = bus.read_byte_data(address, registerX)
-			rawAccelY = bus.read_byte_data(address, registerY)
-			rawAccelZ = bus.read_byte_data(address, registerZ)
-			self.fAcc = open('accelerometer.txt', 'a')
-			self.fAcc.write(str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ))
-			self.fAcc.close()
+        		rawAccelX = bus.read_byte_data(address, registerAccX)
+                	rawAccelY = bus.read_byte_data(address, registerAccY)
+                        rawAccelZ = bus.read_byte_data(address, registerAccZ)
+        		self.fAcc = open('sensorData/accelerometer.txt', 'a')
+                	self.fAcc.write(str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ) + '\n')
+                        self.fAcc.close()
 		except:
-			rawAccelX = "NO_VAL"
+                        rawAccelX = "NO_VAL"
 			rawAccelY = "NO_VAL"
 			rawAccelZ = "NO_VAL"
+
 
 		return ",{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery, calculatedRHValue)
 
@@ -266,7 +276,7 @@ class balloonScript():
 		try:
 			while (retries > 0 and iterationsToWait > 0):
 				if (self.gpsSerialPort.inWaiting() > 0):  # If there's a buffer for us to read
-					serialInput = self.gpsSerialPort.readline(1024)
+					serialInput = self.gpsSerialPort.readline()
 					if (serialInput[:6] == r"$GPGGA"):  # Makes sure this is the line we want
 						break  # This is our stop
 					else:
@@ -277,7 +287,7 @@ class balloonScript():
 					iterationsToWait -= 1
 
 		except:
-			print("Unable to read serial input: {0} at baud {1}".format(GPS_SERIAL_PORT, GPS_BAUDRATE))
+			print("Unable to read serial port {0} at baud {1}".format(GPS_SERIAL_PORT, GPS_BAUDRATE))
 
 		if (retries > 0 and iterationsToWait > 0):  # We found what we wanted
 			messageReceived = serialInput
