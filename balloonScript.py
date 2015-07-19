@@ -28,6 +28,8 @@ import os
 import numpy
 import RPi.GPIO as GPIO
 import time
+import cv2
+
 
 RADIO_CALLSIGN = "HAB"
 RADIO_SERIAL_PORT = "/dev/ttyUSB0"  # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
@@ -56,6 +58,16 @@ registerRH   = 0xa4  # ADC CH 4
 registerAccX = 0xe4  # ADC CH 5
 registerAccY = 0xb4  # ADC CH 6
 registerAccZ = 0xf4  # ADC CH 7
+
+snapCount = 0
+i = 0
+
+cap = cv2.VideoCapture(0)
+fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
+out = cv2.VideoWriter('output.avi', fourcc, 25.0, (640,480))
+
+if cap.isOpened() == False:
+	cap.open(0)
 
 class balloonScript():
 	def __init__(self):
@@ -389,23 +401,34 @@ class balloonScript():
 		print("BRM successfully released")
 		self.sendSerialOutput("BRM is released")
 		self.sendSerialOutput("MOCK: BRM Activated")
-	# 	GPIO.setmode(GPIO.BOARD)
-	#
-	# 	GPIO.setup(11, GPIO.OUT)
-	#
-	# 	GPIO.output(11,0)
-	#
-	# 	password = raw_input()
-	#
-	# 	while True:
-	# 		if str(password) == 'SSAGhabRELEASE':
-	# 			zero = time.time()
-	# 			while time.time() - zero < 9001:
-	# 				GPIO.output(11,1)
-	# 			break
-	# 		else:
-	# 			password = raw_input()
-	# 	GPIO.cleanup()
+		
+		GPIO.setmode(GPIO.BOARD)
+		GPIO.setup(11, GPIO.OUT)
+	
+	 	GPIO.output(11,0)
+	
+	 	password = raw_input()
+	
+	 	while True:
+	 		if str(password) == 'SSAGhabRELEASE':
+	 			zero = time.time()
+	 			while time.time() - zero < 300:
+	 				try:
+	 					ret, frame = cap.read()
+	 					out.write(frame)
+	 					cv2.waitKey(1)
+	 				except:
+	 					pass
+	 				GPIO.output(11,1)
+	 			try:
+	 				out.release()
+	 				cap.release()
+	 			except:
+	 				pass
+	 			break
+	 		else:
+	 			password = raw_input()
+	 	GPIO.cleanup()
 
 		'''
 		NOTES
@@ -416,6 +439,20 @@ class balloonScript():
 		If raspi pin is low, motor will expand
 		
 		'''
+	def brmReset(self):
+		GPIO.setmode(GPIO.BOARD)
+		GPIO.setup(11, GPIO.OUT)
+	
+	 	GPIO.output(11,0)
+		
+	def snapShot(self):
+		if str(snapCommand) == 'snapshot':
+			ret, frame = cap.read()
+			cv2.imwrite('snapshot' + str(snapCount) + '.png', frame)
+			snapCount = snapCount + 1
+		else:
+			snapCommand = raw_input()
+
 
 if __name__ == '__main__':
 	runScript = balloonScript()
