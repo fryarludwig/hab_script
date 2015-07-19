@@ -16,11 +16,10 @@ Misc. Notes:
         - Enable through raspi-config
         - Edit /etc/modules and add these two lines: "i2c-bcm2708" and "i2c-dev"
         - Reboot
-
+- GPS via UART freezes - unsure as to the reason why
+        - Currently running GPS via USB, and this works flawlessly
 
 """
-
-
 
 import serial
 import math
@@ -31,20 +30,16 @@ import RPi.GPIO as GPIO
 import time
 
 RADIO_CALLSIGN = "HAB"
-RADIO_SERIAL_PORT = "/dev/ttyS1"  # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
+RADIO_SERIAL_PORT = "/dev/ttyUSB0"  # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
 RADIO_BAUDRATE = 9600
 
 GPS_LOG_FILE_LOCATION = r"logData/gps_log.txt"
 SCRIPT_LOG_FILE_LOCATION = r"logData/balloon_script_log.txt"
-TELEMETRY_FILE_BASE = r"logData/dictionary.txt"
 
-GPS_SERIAL_PORT = "/dev/ttyAMA0"
+GPS_SERIAL_PORT = "/dev/ttyUSB1"
 GPS_BAUDRATE = 4800
-GPS_LEN_IN_BYTES = 75
 
-SHORT_SLEEP_DURATION = 0.05
-LONG_SLEEP_DURATION = 1
-HEARTBEAT_INTERVAL = 100
+RELEASE_BALLOON_ALTITUDE = 23774   # 78,000 feet
 
 Vin = 3.3
 Vsupply = 5
@@ -70,12 +65,10 @@ class balloonScript():
                         self.scriptLog = open(SCRIPT_LOG_FILE_LOCATION, "a")
                 except:
                         self.gpsLog = open(SCRIPT_LOG_FILE_LOCATION, "w")
-                        
                 try:
                         self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
                 except:
                         self.gpsLog = open(GPS_LOG_FILE_LOCATION, "w")
-                        
 		try:
 			self.fTrpi = open('sensorData/temp_raspi.txt', 'a')
 		except:
@@ -101,6 +94,8 @@ class balloonScript():
 		except:
 			self.fAcc  = open('sensorData/accelerometer.txt', 'w')
 		
+                # Set up variables to be used by the script
+                self.altitudeDataList = []
 		
 		# Open serial ports
 		self.radioSerialPort = None
@@ -117,17 +112,17 @@ class balloonScript():
 		while(True):
 			# send
 			try:
-				messageToSend = self.formatData(self.gpsSerialInput(), self.getSensorData())
-				if (messageToSend != "INVALID DATA"):
-					print("Sending: " + messageToSend)
-					self.sendSerialOutput(messageToSend)
+                                gpsMessage, validGpsData = processGpsData(self.gpsSerialInput())
+                                sensorData, validSensorData = self.getSensorData()
+                                
+                                if (validGpsData or validSensorData):
+                                        self.sendSerialOutput(validGpsData + validSensorData)
+                                        
 				self.gpsLog.writelines(messageToSend)
-				print("Serial: " + messageToSend)
 
 			except:
-				self.openRadioSerialPort()
-				self.openGpsSerialPort()
 				print("Caught exception in main loop.")
+				sys.exit()
 
 			self.scriptLog.write(messageToSend)
 
@@ -140,53 +135,12 @@ class balloonScript():
 			self.scriptLog.writelines(messageReceived)
 
 	def handleMessage(self, message):
-		for line in message:
-			if not ("No messages received." in line):
-				if ("releaseBalloonNow" in line):
-					self.releaseBalloon()
-					break
-				else:
-					print("Received unknown: {0}".format(line))
-					print("Saving message to file")
-					print("Sending NO ACK message back to GS")
+                try:
+                        for line in message.split(",END_TX\n"):
+                                if (len(line) > 0):
+                except:
+                        print("Exception in handling balloon release")
 
-	def formatData(self, gpsString, dataString):
-		finalDataString = "INVALID DATA"
-
-		if (gpsString != "NO_GPS_DATA\n"):
-			try:
-				gpsSplit = gpsString.split(",")
-				time = gpsSplit[1][:6]
-
-				latitude = gpsSplit[2]
-				degrees = float(latitude[:2])
-				minutes = float(latitude[2:])
-
-				if (gpsSplit[3] == "S"):
-					latitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
-				else:
-					latitude = "%4.5f" % (degrees + (minutes / 60))
-
-				longitude = gpsSplit[4]
-				degrees = float(longitude[:3])
-				minutes = float(longitude[3:])
-				if (gpsSplit[5] == "W"):
-					longitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
-				else:
-					longitude = "%4.5f" % (degrees + (minutes / 60))
-
-				altitude = gpsSplit[9]
-
-				formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
-			except:
-				formattedGpsString = "0,0,0,0"
-
-		if (dataString == ",NO_VAL,NO_VAL,NO_VAL,NO_VAL" and formattedGpsString == "0,0,0,0"):
-			print ("INVALID DATA STRINGS GIVEN")
-		else:
-			finalDataString = formattedGpsString + dataString
-
-		return finalDataString
 
 	def getSensorData(self):
 		calculatedPiTemp = 0
@@ -265,13 +219,94 @@ class balloonScript():
 			rawAccelZ = "NO_VAL"
 
 
-		return ",{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery, calculatedRHValue)
+		return ",{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp,
+                                                calculatedVoltageBattery, calculatedRHValue)
+
+        def processAltitude(self, currAlt):
+                if (currAlt > RELEASE_BALLOON_ALTITUDE):
+                        self.releaseBalloon()
+                else:
+                        try:
+                                balloonIsFalling = True
+                                
+                                numOfDataPoints = len(self.altitudeDataList)
+
+                                if (numOfDataPoints > 0):
+                                        altitudeDataList.append(currAlt - altitudeDataList[-1]) # How much balloon has risen since last check
+                                else:
+                                        altitudeDataList.append(currAlt)
+
+                                if (numOfDataPoints > 10):                                # Only keep latest 10 height differences
+                                        self.altitudeDataList.pop(0)
+                                        
+                                        for deltaAlt in altitudeDataList:                 # Only check if we have enough data points
+                                                if (deltaAlt > 0):
+                                                        balloonIsFalling = False
+                                                        break
+                                        if (balloonIsFalling):
+                                                self.releaseBalloon()
+                                                        
+                        except:
+                                print("Error in calculating altitude change")
+
+	def processGpsData(self, gpsString):
+		validGpsData = False
+		formattedGpsString = 'NO_VAL,NO_VAL,NO_VAL,NO_VAL'
+
+		if (gpsString != "NO_GPS_DATA\n"):
+			try:
+				gpsSplit = gpsString.split(",")
+				if (len(gpsSplit) == 15):
+                                        time = gpsSplit[1][:6]
+
+                                        latitude = gpsSplit[2]
+                                        if(len(latitude) > 0):
+                                                degrees = float(latitude[:2])
+                                                minutes = float(latitude[2:])
+
+                                                if (gpsSplit[3] == "S"):
+                                                        latitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
+                                                else:
+                                                        latitude = "%4.5f" % (degrees + (minutes / 60))
+                                        else:
+                                                latitude = ''
+
+                               
+                                        longitude = gpsSplit[4]
+                                        if(len(longitude) > 0):         
+                                                degrees = float(longitude[:3])
+                                                minutes = float(longitude[3:])
+                                                if (gpsSplit[5] == "W"):
+                                                        longitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
+                                                else:
+                                                        longitude = "%4.5f" % (degrees + (minutes / 60))
+                                        else:
+                                                longitude = ''
+
+                                        altitude = gpsSplit[9]
+
+                                        if (len(altitude) > 0):
+                                                try:
+                                                        self.processAltitude(float(altitude))
+                                                except:
+                                                        print("Unable to cast Altitude to a float")
+
+                                        formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
+                                else:
+                                        print('line not correct: ' + str(gpsSplit))
+			except:
+                                print('Format data: no valid GPS string - exception caught')
+                                print('offending string: ' + str(gpsString))
+				formattedGpsString = ",,,"
+				validGpsData = False
+
+		return formattedGpsString, validGpsData
 
 	def gpsSerialInput(self):
 		messageReceived = "NO_GPS_DATA\n"
 		serialInput = ""
 		retries = 5
-		iterationsToWait = 100
+		iterationsToWait = 10
 
 		try:
 			while (retries > 0 and iterationsToWait > 0):
@@ -284,10 +319,12 @@ class balloonScript():
 						serialInput = ""  # This is not the data we're looking for
 						retries -= 1
 				else:
+                                        print('GPS serial port is not waiting')
+                                        time.sleep(0.1)
 					iterationsToWait -= 1
 
 		except:
-			print("Unable to read serial port {0} at baud {1}".format(GPS_SERIAL_PORT, GPS_BAUDRATE))
+			print("Exception thrown while trying to read GPS serial input")
 
 		if (retries > 0 and iterationsToWait > 0):  # We found what we wanted
 			messageReceived = serialInput
@@ -300,46 +337,52 @@ class balloonScript():
 
 		try:
 			if not (self.radioSerialPort.inWaiting()):
-				sleep(1)
+				time.sleep(0.5)
 			while(self.radioSerialPort.inWaiting()):
 				serialInput += self.radioSerialPort.readline()
-			print(len("Serial Input: " + serialInput))
+			if (len(serialInput) > 1):
+        			print("Serial input from radio: " + serialInput)
+        		else:
+                                print("No serial input to be read from the radio")
 		except:
-			print("Unable to open serial port for input on " + RADIO_SERIAL_PORT)
+			print("Unable to read from radio serial port.")
 
 		return serialInput
+	
 
 	def sendSerialOutput(self, line):
 		try:
 			print(RADIO_CALLSIGN + "," + line + ",END_TX\n")
 			line = self.radioSerialPort.write(RADIO_CALLSIGN + "," + line + ",END_TX\n")
 		except:
-			print("Unable to write to serial port on " + RADIO_SERIAL_PORT)
-
+			print("Unable to write to radio serial port on " + RADIO_SERIAL_PORT)
+			
 	def openRadioSerialPort(self):
 		try:
-			self.radioSerialPort.close()
+                        if (self.radioSerialPort.isOpen()):
+        			self.radioSerialPort.close()
 		except:
-			print("Unable to close serial port " + RADIO_SERIAL_PORT)
+			print("Failed to close the radio serial port " + RADIO_SERIAL_PORT + ". Was it ever opened?")
 
 		try:
-			self.radioSerialPort = serial.Serial(port = RADIO_SERIAL_PORT, baudrate = RADIO_BAUDRATE, timeout = 2)
+			self.radioSerialPort = serial.Serial(port = RADIO_SERIAL_PORT, baudrate = RADIO_BAUDRATE, timeout = 1)
 		except:
-			print("Unable to open GPS serial port")
+			print("Failed to open the radio GPS serial port")
 
 	def openGpsSerialPort(self):
 		try:
-			self.gpsSerialPort.close()
+                        if (self.gpsSerialPort.isOpen()):
+        			self.gpsSerialPort.close()
 		except:
-			print("Unable to close serial port " + GPS_SERIAL_PORT)
+			print("GPS serial port " + GPS_SERIAL_PORT + " won't close. May not have been open")
 
 		try:
-			self.gpsSerialPort = serial.Serial(port = GPS_SERIAL_PORT, baudrate = GPS_BAUDRATE, timeout = 2)
+			self.gpsSerialPort = serial.Serial(port = GPS_SERIAL_PORT, baudrate = GPS_BAUDRATE, timeout = 1)
 		except:
-			print("Unable to open GPS serial port")
+			print("Failed to open the GPS serial port")
 
 	def releaseBalloon(self):
-		sleep(4)
+		time.sleep(4)
 		print("Activating balloon release mechanism")
 		print("BRM is activated")
 		self.sendSerialOutput("BRM is activated")
