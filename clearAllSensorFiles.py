@@ -1,0 +1,6 @@
+fTrpi = open('sensorData/temp_raspi.txt', 'w')
+fText = open('sensorData/temp_external.txt', 'w')
+fTbat = open('sensorData/temp_batteries.txt', 'w')
+fVbat = open('sensorData/voltage_batteries.txt', 'w')
+fRH   = open('sensorData/humidity.txt', 'w')
+fAcc  = open('sensorData/accelerometer.txt', 'w')

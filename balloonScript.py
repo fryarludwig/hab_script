@@ -31,7 +31,7 @@ import time
 import cv2
 import datetime
 
-RADIO_CALLSIGN = "HAB"
+RADIO_CALLSIGN = "hab"
 RADIO_SERIAL_PORT = "/dev/ttyUSB0"  # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
 RADIO_BAUDRATE = 9600
 
@@ -42,7 +42,7 @@ SCRIPT_LOG_FILE_LOCATION = r"logData/balloon_script_log.txt"
 GPS_SERIAL_PORT = "/dev/ttyUSB1"
 GPS_BAUDRATE = 4800
 
-RELEASE_BALLOON_ALTITUDE = 23774  # 78,000 feet
+RELEASE_BALLOON_ALTITUDE = 23774    # 78,000 feet
 
 Vin = 3.3
 Vsupply = 5
@@ -55,7 +55,7 @@ registerTrpi = 0x84  # ADC CH 0
 registerText = 0xc4  # ADC CH 1
 registerTbat = 0x94  # ADC CH 2
 registerVbat = 0xd4  # ADC CH 3
-registerRH = 0xa4  # ADC CH 4
+registerRH   = 0xa4  # ADC CH 4
 registerAccX = 0xe4  # ADC CH 5
 registerAccY = 0xb4  # ADC CH 6
 registerAccZ = 0xf4  # ADC CH 7
@@ -66,10 +66,10 @@ i = 0
 cap = cv2.VideoCapture(0)
 fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
 out = cv2.VideoWriter('output.avi', fourcc, 25.0, (640, 480))
-
+'''
 if cap.isOpened() == False:
 	cap.open(0)
-
+'''
 class balloonScript():
 	def __init__(self):
 		# Open output files
@@ -122,24 +122,19 @@ class balloonScript():
 		self.runBalloonScript()
 
 	def runBalloonScript(self):
-		messageToSend = "NULL_MESSAGE"
-
 		while(True):
-			# send
+			# send			
 			try:
+                                time.sleep(0.1)
 				gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
 				sensorData, validSensorData = self.getSensorData()
 
 				if (validGpsData or validSensorData):
-					self.sendSerialOutput(validGpsData + validSensorData)
-
-				self.gpsLog.writelines(messageToSend)
+					self.sendSerialOutput(gpsMessage + sensorData)
 
 			except:
-				print("Caught exception in main loop.")
+				print("Main loop handled uncaught exception. Exiting now.")
 				return 0
-
-			self.scriptLog.write(messageToSend)
 
 			# receive
 			messageReceived = self.radioSerialInput()
@@ -170,22 +165,29 @@ class balloonScript():
 	def processCommand(self, command):
 		if (command == "ARM_BRM"):
 			self.balloonReleaseArmed = True
-			self.sendSerialOutput("BRM_ARMED")
+			self.sendSerialOutput("ack,BRM_ARMED")
+			print("ARMING BALLOON")
 		elif (command == "DISARM_BRM"):
 			self.balloonReleaseArmed = True
-			self.sendSerialOutput("BRM_DISARMED")
+			self.sendSerialOutput("ack,BRM_DISARMED")
+			print("DISARMING BALLOON")
 		elif (command == "SSAG_RELEASE_BALLOON" and
 				self.balloonReleaseArmed):
 			self.releaseBalloon()
-			self.sendSerialOutput("BRM_ACTIVATED")
+			print("BALLOON RELEASE ACTIVATED")
+			self.sendSerialOutput("ack,BRM_ACTIVATED")
 		elif (command == "RESET_BRM"):
 			self.balloonReleaseArmed = False
 			self.brmReset()
-			self.sendSerialOutput("BRM_RESET")
+			self.sendSerialOutput("ack,BRM_RESET")
+			print("BALLOON RELEASE RESET")
 		else:
-			self.sendSerialOutput("NO_OP")
+			print("COMMAND NOT RECOGNIZED")
+			self.sendSerialOutput("ack,NO_OP")
 
 	def getSensorData(self):
+                validSensorData = 6
+                
 		calculatedPiTemp = 0
 		calculatedExternalTemp = 0
 		calculatedBatteryTemp = 0
@@ -205,6 +207,7 @@ class balloonScript():
 			self.fTrpi.write(str(VTrpi) + ' ' + calculatedPiTemp + '\n')
 			self.fTrpi.close()
 		except:
+                        validSensorData -= 1
 			calculatedPiTemp = "NO_VAL"
 
 		try:
@@ -216,6 +219,7 @@ class balloonScript():
 			self.fText.write(str(VText) + ' ' + calculatedExternalTemp + '\n')
 			self.fText.close()
 		except:
+                        validSensorData -= 1
 			calculatedExternalTemp = "NO_VAL"
 
 		try:
@@ -227,44 +231,53 @@ class balloonScript():
 			self.fTbat.write(str(VTbat) + ' ' + calculatedBatteryTemp + '\n')
 			self.fTbat.close()
 		except:
+                        validSensorData -= 1
 			calculatedBatteryTemp = "NO_VAL"
 
 		try:
 			rawValBatteryVoltage = bus.read_byte_data(address, registerVbat)
-			calculatedVoltageBattery = "%4.1f" % (.05155 * rawValBatteryVoltage + .18659)
+			#calculatedVoltageBattery = "%4.1f" % (.05155 * rawValBatteryVoltage + .18659)
+                        calculatedVoltageBattery = "%4.1f" % (((10.08 + 30.05) / 10.08) * rawValBatteryVoltage * 3.3 / 255)
 			self.fVbat = open('sensorData/voltage_batteries.txt', 'a')
 			self.fVbat.write(str(rawValBatteryVoltage) + ' ' + calculatedVoltageBattery + '\n')
 			self.fVbat.close()
 		except:
+                        validSensorData -= 1
 			calculatedVoltageBattery = "NO_VAL"
 
 		try:
 			rawValRH = bus.read_byte_data(address, registerRH)
-			VRH = rawValRH * 3.3 * ((10.1 + 38.9) / 38.9) / 255
+			VRH = rawValRH * 3.3 * ((10.1 + 38.5) / 38.5) / 255
 			RHApprox = ((VRH / Vsupply) - .16) / .0062
 			calculatedRHValue = "%4.1f" % ((RHApprox) / (1.0546 - (.00216 * PiTempRHPurpose)))
 			self.fRH = open('sensorData/humidity.txt', 'a')
 			self.fRH.write(str(rawValRH) + ' ' + calculatedRHValue + '\n')
 			self.fRH.close()
 		except:
+                        validSensorData -= 1
 			calculatedRHValue = "NO_VAL"
 
 		try:
+                        i = 0
 			rawAccelX = str(bus.read_byte_data(address, registerAccX))
 			rawAccelY = str(bus.read_byte_data(address, registerAccY))
 			rawAccelZ = str(bus.read_byte_data(address, registerAccZ))
+			positionZero = [128,128,152]
+                        while i < 3:
+                                moment[i] = abs(rawMoment[i] - positionZero[i])
+                                i = i + 1
+                        calculatedMagnitude = round(((moment[0]) ** 2 + (moment[1]) ** 2 + (moment[2]) ** 2) ** (.5), 2)
 			self.fAcc = open('sensorData/accelerometer.txt', 'a')
-			self.fAcc.write(rawAccelX + ' ' + rawAccelY + ' ' + rawAccelZ + '\n')
+			self.fAcc.write(moment[0] + ' ' + moment[1] + ' ' + moment[2] + ' ' + magnitude + '\n')
 			self.fAcc.close()
 		except:
-			rawAccelX = "NO_VAL"
-			rawAccelY = "NO_VAL"
-			rawAccelZ = "NO_VAL"
+                        validSensorData -= 1
+			calculatedMagnitude = "NO_VAL"
 
 
-		return ",{},{},{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
-												calculatedBatteryTemp, calculatedVoltageBattery,
-												calculatedRHValue, rawAccelX, rawAccelY, rawAccelZ)
+		return ",{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
+							calculatedBatteryTemp, calculatedVoltageBattery,
+							calculatedRHValue, calculatedMagnitude), (validSensorData > 0)
 
 	def processAltitude(self, currAlt):
 		if (currAlt > RELEASE_BALLOON_ALTITUDE):
@@ -289,15 +302,15 @@ class balloonScript():
 							break
 					if (balloonIsFalling):
 						self.releaseBalloon()
-
 			except:
 				print("Error in calculating altitude change")
+
 
 	def processGpsData(self, gpsString):
 		validGpsData = False
 		formattedGpsString = 'NO_VAL,NO_VAL,NO_VAL,NO_VAL'
-
-		if (gpsString != "NO_GPS_DATA\n"):
+                
+		if (gpsString != "NO_GPS_DATA\n" and len(gpsString) > 0):
 			try:
 				gpsSplit = gpsString.split(",")
 				if (len(gpsSplit) == 15):
@@ -373,6 +386,7 @@ class balloonScript():
 		if (retries > 0 and iterationsToWait > 0):  # We found what we wanted
 			messageReceived = serialInput
 
+                print(messageReceived)
 		return messageReceived
 
 
@@ -396,8 +410,7 @@ class balloonScript():
 
 	def sendSerialOutput(self, line):
 		try:
-			print(RADIO_CALLSIGN + "," + line + ",END_TX\n")
-			line = self.radioSerialPort.write(RADIO_CALLSIGN + "," + line + ",END_TX\n")
+			self.radioSerialPort.write(RADIO_CALLSIGN + "," + str(line) + ",END_TX\n")
 		except:
 			print("Unable to write to radio serial port on " + RADIO_SERIAL_PORT)
 
@@ -426,47 +439,56 @@ class balloonScript():
 			print("Failed to open the GPS serial port")
 
 	def releaseBalloon(self):
-		GPIO.setmode(GPIO.BOARD)
-		GPIO.setup(11, GPIO.OUT)
+		GPIO.setmode(GPIO.BCM)
+                GPIO.setwarnings(False)
+		GPIO.setup(23, GPIO.OUT)
+		
+	 	GPIO.output(23, 0)
 
-	 	GPIO.output(11, 0)
+                zero = time.time()
+                
+                while time.time() - zero < 7:
+                        try:
+                        	ret, frame = cap.read()
+                        	out.write(frame)
+                        	cv2.waitKey(1)
+                        except:
+                        	pass
+                        GPIO.output(23, 0)
 
-	 	while True:
-	 		# if str(password) == 'SSAGhabRELEASE':
-	 			zero = time.time()
-	 			while time.time() - zero < 300:
-	 				try:
-	 					ret, frame = cap.read()
-	 					out.write(frame)
-	 					cv2.waitKey(1)
-	 				except:
-	 					pass
-	 				GPIO.output(11, 1)
-	 			try:
-	 				out.release()
-	 				cap.release()
-	 			except:
-	 				pass
-	 			break
-	 		# else:
-	 			# password = raw_input()
 	 	GPIO.cleanup()
 
-		'''
+
+                '''
 		NOTES
 		
 		Orange wire must be connected to pin 5 of MOSFET
 		Yellow wire must be connected to pin 7 of MOSFET
 		If raspi pin is high, motor will retract
 		If raspi pin is low, motor will expand
-		
 		'''
+
 	def brmReset(self):
-		GPIO.setmode(GPIO.BOARD)
-		GPIO.setup(11, GPIO.OUT)
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(23, GPIO.OUT)
+                GPIO.setwarnings(False)
+                
+	 	GPIO.output(23, 1)
+	 	
+                zero = time.time()
+                
+                while time.time() - zero < 7:
+                        try:
+                        	ret, frame = cap.read()
+                        	out.write(frame)
+                        	cv2.waitKey(1)
+                        except:
+                        	pass
+                        GPIO.output(23, 1)
 
-	 	GPIO.output(11, 0)
+	 	GPIO.cleanup()
 
+        
 	def snapShot(self):
 		if str(snapCommand) == 'snapshot':
 			ret, frame = cap.read()
@@ -474,7 +496,7 @@ class balloonScript():
 			snapCount = snapCount + 1
 		else:
 			snapCommand = raw_input()
-
+        
 def logRadioMessage(line):
 	try:
 		radioLogFile = open(RADIO_LOG_FILE_LOCATION, "a")
