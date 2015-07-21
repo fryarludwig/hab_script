@@ -394,7 +394,12 @@ class balloonScript():
 		If raspi pin is low, motor will expand
 		
 		'''
+	def brmReset(self):
+		GPIO.setmode(GPIO.BOARD)
+		GPIO.setup(11, GPIO.OUT)
 	
+	 	GPIO.output(11,0)
+		
 	def snapShot(self):
 		if str(snapCommand) == 'snapshot':
 			ret, frame = cap.read()
