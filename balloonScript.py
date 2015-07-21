@@ -241,7 +241,8 @@ class balloonScript():
 			self.fRH = open('humidity.txt', 'a')
 			self.fRH.write(str(rawValRH) + ' ' + calculatedRHValue + '\n')
 			self.fRH.close()
-		
+		except:
+			calculatedRHValue = "NO_VAL"
 		try:
 			rawAccelX = bus.read_byte_data(address, registerX)
 			rawAccelY = bus.read_byte_data(address, registerY)
