@@ -45,6 +45,9 @@ registerText = 0xc4  # ADC CH 1
 registerTbat = 0x94  # ADC CH 2
 registerVbat = 0xd4  # ADC CH 3
 registerRH   = 0xa4  # ADC CH 4
+registerAccX = 0xe4  # ADC CH 5
+registerAccY = 0xb4  # ADC CH 6
+registerAccZ = 0xf4  # ADC CH 7
 
 """
 TODO: Refactor serial in and out to match MoGS implementation
@@ -62,25 +65,31 @@ class balloonScript():
 		self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
 
 		try:
-			self.fTrpi = open('temp_raspi.txt', 'a')
+			self.fTrpi = open('logData/temp_raspi.txt', 'a')
 		except:
-			self.fTrpi = open('temp_raspi.txt', 'w')
+			self.fTrpi = open('logData/temp_raspi.txt', 'w')
 		try:
-			self.fText = open('temp_external.txt', 'a')
+			self.fText = open('logData/temp_external.txt', 'a')
 		except:
-			self.fText = open('temp_external.txt', 'w')
+			self.fText = open('logData/temp_external.txt', 'w')
 		try:
-			self.fTbat = open('temp_batteries.txt', 'a')
+			self.fTbat = open('logData/temp_batteries.txt', 'a')
 		except:
-			self.fTbat = open('temp_batteries.txt', 'w')
+			self.fTbat = open('logData/temp_batteries.txt', 'w')
 		try:
-			self.fVbat = open('voltage_batteries.txt', 'a')
+			self.fVbat = open('logData/voltage_batteries.txt', 'a')
 		except:
-			self.fVbat = open('voltage_batteries.txt', 'w')
+			self.fVbat = open('logData/voltage_batteries.txt', 'w')
 		try:
-			self.fRH = open('humidity.txt', 'a')
+			self.fRH   = open('logData/humidity.txt', 'a')
 		except:
-			self.fRH = open('humidity.txt', 'w')
+			self.fRH   = open('logData/humidity.txt', 'w')
+		try:
+			self.fAcc  = open('logData/accelerometer.txt', 'a')
+		except:
+			self.fAcc  = open('logData/accelerometer.txt', 'w')
+		
+		
 		# Open serial ports
 		self.radioSerialPort = None
 		self.gpsSerialPort = None
@@ -178,6 +187,9 @@ class balloonScript():
 		calculatedBatteryTemp = 0
 		calculatedVoltageBattery = 0
 		calculatedRHValue = 0
+		rawAccelX = 0
+		rawAccelY = 0
+		rawAccelZ = 0
 
 		try:
 			rawValPiTemp = bus.read_byte_data(address, registerTrpi)  # 4604
@@ -229,8 +241,20 @@ class balloonScript():
 			self.fRH = open('humidity.txt', 'a')
 			self.fRH.write(str(rawValRH) + ' ' + calculatedRHValue + '\n')
 			self.fRH.close()
+		
+		try:
+			rawAccelX = bus.read_byte_data(address, registerX)
+			rawAccelY = bus.read_byte_data(address, registerY)
+			rawAccelZ = bus.read_byte_data(address, registerZ)
+			self.fAcc = open('accelerometer.txt', 'a')
+			self.fAcc.write(str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ))
+			self.fAcc.close()
+		except:
+			rawAccelX = "NO_VAL"
+			rawAccelY = "NO_VAL"
+			rawAccelZ = "NO_VAL"
 
-		return ",{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery)
+		return ",{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp, calculatedVoltageBattery, calculatedRHValue)
 
 	def gpsSerialInput(self):
 		messageReceived = "NO_GPS_DATA\n"
