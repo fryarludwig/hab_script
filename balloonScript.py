@@ -109,6 +109,8 @@ class balloonScript():
 
 		# Set up variables to be used by the script
 		self.altitudeDataList = []
+		self.balloonReleaseArmed = False
+		self.balloonReleaseActivated = False
 
 		# Open serial ports
 		self.radioSerialPort = None
@@ -125,7 +127,7 @@ class balloonScript():
 		while(True):
 			# send
 			try:
-				gpsMessage, validGpsData = processGpsData(self.gpsSerialInput())
+				gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
 				sensorData, validSensorData = self.getSensorData()
 
 				if (validGpsData or validSensorData):
@@ -153,18 +155,35 @@ class balloonScript():
 				if (len(line) > 0):
 					if (line[:3] == "nps"):
 						if (line[4:7] == "cmd"):
-							self.handleMessage(line[8:])
+							self.processCommand(line[8:])
 
 					elif (line[:6] == "chase1" or
 						  line[:6] == "chase2" or
 						  line[:6] == "chase3"):
 						if (line[7:10] == "cmd"):
-							self.handleMessage(line[11:])
+							self.processCommand(line[11:])
 
 				logRadioMessage(line)
 		except:
 			print("Exception in handling balloon release")
 
+	def processCommand(self, command):
+		if (command == "ARM_BRM"):
+			self.balloonReleaseArmed = True
+			self.sendSerialOutput("BRM_ARMED")
+		elif (command == "DISARM_BRM"):
+			self.balloonReleaseArmed = True
+			self.sendSerialOutput("BRM_DISARMED")
+		elif (command == "SSAG_RELEASE_BALLOON" and
+				self.balloonReleaseArmed):
+			self.releaseBalloon()
+			self.sendSerialOutput("BRM_ACTIVATED")
+		elif (command == "RESET_BRM"):
+			self.balloonReleaseArmed = False
+			self.brmReset()
+			self.sendSerialOutput("BRM_RESET")
+		else:
+			self.sendSerialOutput("NO_OP")
 
 	def getSensorData(self):
 		calculatedPiTemp = 0
@@ -231,11 +250,11 @@ class balloonScript():
 			calculatedRHValue = "NO_VAL"
 
 		try:
-			rawAccelX = bus.read_byte_data(address, registerAccX)
-			rawAccelY = bus.read_byte_data(address, registerAccY)
-			rawAccelZ = bus.read_byte_data(address, registerAccZ)
+			rawAccelX = str(bus.read_byte_data(address, registerAccX))
+			rawAccelY = str(bus.read_byte_data(address, registerAccY))
+			rawAccelZ = str(bus.read_byte_data(address, registerAccZ))
 			self.fAcc = open('sensorData/accelerometer.txt', 'a')
-			self.fAcc.write(str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ) + '\n')
+			self.fAcc.write(rawAccelX + ' ' + rawAccelY + ' ' + rawAccelZ + '\n')
 			self.fAcc.close()
 		except:
 			rawAccelX = "NO_VAL"
@@ -243,8 +262,9 @@ class balloonScript():
 			rawAccelZ = "NO_VAL"
 
 
-		return ",{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp,
-						calculatedVoltageBattery, calculatedRHValue)
+		return ",{},{},{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
+												calculatedBatteryTemp, calculatedVoltageBattery,
+												calculatedRHValue, rawAccelX, rawAccelY, rawAccelZ)
 
 	def processAltitude(self, currAlt):
 		if (currAlt > RELEASE_BALLOON_ALTITUDE):
@@ -256,14 +276,14 @@ class balloonScript():
 				numOfDataPoints = len(self.altitudeDataList)
 
 				if (numOfDataPoints > 0):
-					altitudeDataList.append(currAlt - altitudeDataList[-1])  # How much balloon has risen since last check
+					self.altitudeDataList.append(currAlt - self.altitudeDataList[-1])  # How much balloon has risen since last check
 				else:
-					altitudeDataList.append(currAlt)
+					self.altitudeDataList.append(currAlt)
 
 				if (numOfDataPoints > 10):  # Only keep latest 10 height differences
 					self.altitudeDataList.pop(0)
 
-					for deltaAlt in altitudeDataList:  # Only check if we have enough data points
+					for deltaAlt in self.altitudeDataList:  # Only check if we have enough data points
 						if (deltaAlt > 0):
 							balloonIsFalling = False
 							break
