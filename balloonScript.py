@@ -13,11 +13,11 @@ Changelog:
 Misc. Notes:
 
 - If i2c directory is not found:
-        - Enable through raspi-config
-        - Edit /etc/modules and add these two lines: "i2c-bcm2708" and "i2c-dev"
-        - Reboot
+	- Enable through raspi-config
+	- Edit /etc/modules and add these two lines: "i2c-bcm2708" and "i2c-dev"
+	- Reboot
 - GPS via UART freezes - unsure as to the reason why
-        - Currently running GPS via USB, and this works flawlessly
+	- Currently running GPS via USB, and this works flawlessly
 
 """
 
@@ -29,19 +29,20 @@ import numpy
 import RPi.GPIO as GPIO
 import time
 import cv2
-
+import datetime
 
 RADIO_CALLSIGN = "HAB"
 RADIO_SERIAL_PORT = "/dev/ttyUSB0"  # COMX on Windows, /dev/RADIO_SERIAL_PORT on Linux
 RADIO_BAUDRATE = 9600
 
 GPS_LOG_FILE_LOCATION = r"logData/gps_log.txt"
+RADIO_LOG_FILE_LOCATION = r"logData/radio_log.txt"
 SCRIPT_LOG_FILE_LOCATION = r"logData/balloon_script_log.txt"
 
 GPS_SERIAL_PORT = "/dev/ttyUSB1"
 GPS_BAUDRATE = 4800
 
-RELEASE_BALLOON_ALTITUDE = 23774   # 78,000 feet
+RELEASE_BALLOON_ALTITUDE = 23774  # 78,000 feet
 
 Vin = 3.3
 Vsupply = 5
@@ -54,7 +55,7 @@ registerTrpi = 0x84  # ADC CH 0
 registerText = 0xc4  # ADC CH 1
 registerTbat = 0x94  # ADC CH 2
 registerVbat = 0xd4  # ADC CH 3
-registerRH   = 0xa4  # ADC CH 4
+registerRH = 0xa4  # ADC CH 4
 registerAccX = 0xe4  # ADC CH 5
 registerAccY = 0xb4  # ADC CH 6
 registerAccZ = 0xf4  # ADC CH 7
@@ -64,7 +65,7 @@ i = 0
 
 cap = cv2.VideoCapture(0)
 fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
-out = cv2.VideoWriter('output.avi', fourcc, 25.0, (640,480))
+out = cv2.VideoWriter('output.avi', fourcc, 25.0, (640, 480))
 
 if cap.isOpened() == False:
 	cap.open(0)
@@ -74,13 +75,13 @@ class balloonScript():
 		# Open output files
 
 		try:
-                        self.scriptLog = open(SCRIPT_LOG_FILE_LOCATION, "a")
-                except:
-                        self.gpsLog = open(SCRIPT_LOG_FILE_LOCATION, "w")
-                try:
-                        self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
-                except:
-                        self.gpsLog = open(GPS_LOG_FILE_LOCATION, "w")
+			self.scriptLog = open(SCRIPT_LOG_FILE_LOCATION, "a")
+		except:
+			self.gpsLog = open(SCRIPT_LOG_FILE_LOCATION, "w")
+		try:
+			self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
+		except:
+			self.gpsLog = open(GPS_LOG_FILE_LOCATION, "w")
 		try:
 			self.fTrpi = open('sensorData/temp_raspi.txt', 'a')
 		except:
@@ -98,17 +99,17 @@ class balloonScript():
 		except:
 			self.fVbat = open('sensorData/voltage_batteries.txt', 'w')
 		try:
-			self.fRH   = open('sensorData/humidity.txt', 'a')
+			self.fRH = open('sensorData/humidity.txt', 'a')
 		except:
-			self.fRH   = open('sensorData/humidity.txt', 'w')
+			self.fRH = open('sensorData/humidity.txt', 'w')
 		try:
-			self.fAcc  = open('sensorData/accelerometer.txt', 'a')
+			self.fAcc = open('sensorData/accelerometer.txt', 'a')
 		except:
-			self.fAcc  = open('sensorData/accelerometer.txt', 'w')
-		
-                # Set up variables to be used by the script
-                self.altitudeDataList = []
-		
+			self.fAcc = open('sensorData/accelerometer.txt', 'w')
+
+		# Set up variables to be used by the script
+		self.altitudeDataList = []
+
 		# Open serial ports
 		self.radioSerialPort = None
 		self.gpsSerialPort = None
@@ -124,17 +125,17 @@ class balloonScript():
 		while(True):
 			# send
 			try:
-                                gpsMessage, validGpsData = processGpsData(self.gpsSerialInput())
-                                sensorData, validSensorData = self.getSensorData()
-                                
-                                if (validGpsData or validSensorData):
-                                        self.sendSerialOutput(validGpsData + validSensorData)
-                                        
+				gpsMessage, validGpsData = processGpsData(self.gpsSerialInput())
+				sensorData, validSensorData = self.getSensorData()
+
+				if (validGpsData or validSensorData):
+					self.sendSerialOutput(validGpsData + validSensorData)
+
 				self.gpsLog.writelines(messageToSend)
 
 			except:
 				print("Caught exception in main loop.")
-				sys.exit()
+				return 0
 
 			self.scriptLog.write(messageToSend)
 
@@ -147,11 +148,22 @@ class balloonScript():
 			self.scriptLog.writelines(messageReceived)
 
 	def handleMessage(self, message):
-                try:
-                        for line in message.split(",END_TX\n"):
-                                if (len(line) > 0):
-                except:
-                        print("Exception in handling balloon release")
+		try:
+			for line in message.split(',END_TX\n'):
+				if (len(line) > 0):
+					if (line[:3] == "nps"):
+						if (line[4:7] == "cmd"):
+							self.handleMessage(line[8:])
+
+					elif (line[:6] == "chase1" or
+						  line[:6] == "chase2" or
+						  line[:6] == "chase3"):
+						if (line[7:10] == "cmd"):
+							self.handleMessage(line[11:])
+
+				logRadioMessage(line)
+		except:
+			print("Exception in handling balloon release")
 
 
 	def getSensorData(self):
@@ -168,7 +180,7 @@ class balloonScript():
 			rawValPiTemp = bus.read_byte_data(address, registerTrpi)  # 4604
 			VTrpi = rawValPiTemp * Vin / maxAD
 			Rrpi = 51800 * ((Vin / VTrpi) - 1)
-                        PiTempRHPurpose = (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
+			PiTempRHPurpose = (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
 			calculatedPiTemp = "%4.1f" % (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
 			self.fTrpi = open('sensorData/temp_raspi.txt', 'a')
 			self.fTrpi.write(str(VTrpi) + ' ' + calculatedPiTemp + '\n')
@@ -186,7 +198,7 @@ class balloonScript():
 			self.fText.close()
 		except:
 			calculatedExternalTemp = "NO_VAL"
-                        
+
 		try:
 			rawValBatteryTemp = bus.read_byte_data(address, registerTbat)  # 4600
 			VTbat = rawValBatteryTemp * 3.3 / 255
@@ -206,7 +218,7 @@ class balloonScript():
 			self.fVbat.close()
 		except:
 			calculatedVoltageBattery = "NO_VAL"
-		
+
 		try:
 			rawValRH = bus.read_byte_data(address, registerRH)
 			VRH = rawValRH * 3.3 * ((10.1 + 38.9) / 38.9) / 255
@@ -217,49 +229,49 @@ class balloonScript():
 			self.fRH.close()
 		except:
 			calculatedRHValue = "NO_VAL"
-			
+
 		try:
-        		rawAccelX = bus.read_byte_data(address, registerAccX)
-                	rawAccelY = bus.read_byte_data(address, registerAccY)
-                        rawAccelZ = bus.read_byte_data(address, registerAccZ)
-        		self.fAcc = open('sensorData/accelerometer.txt', 'a')
-                	self.fAcc.write(str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ) + '\n')
-                        self.fAcc.close()
+			rawAccelX = bus.read_byte_data(address, registerAccX)
+			rawAccelY = bus.read_byte_data(address, registerAccY)
+			rawAccelZ = bus.read_byte_data(address, registerAccZ)
+			self.fAcc = open('sensorData/accelerometer.txt', 'a')
+			self.fAcc.write(str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ) + '\n')
+			self.fAcc.close()
 		except:
-                        rawAccelX = "NO_VAL"
+			rawAccelX = "NO_VAL"
 			rawAccelY = "NO_VAL"
 			rawAccelZ = "NO_VAL"
 
 
 		return ",{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp, calculatedBatteryTemp,
-                                                calculatedVoltageBattery, calculatedRHValue)
+						calculatedVoltageBattery, calculatedRHValue)
 
-        def processAltitude(self, currAlt):
-                if (currAlt > RELEASE_BALLOON_ALTITUDE):
-                        self.releaseBalloon()
-                else:
-                        try:
-                                balloonIsFalling = True
-                                
-                                numOfDataPoints = len(self.altitudeDataList)
+	def processAltitude(self, currAlt):
+		if (currAlt > RELEASE_BALLOON_ALTITUDE):
+			self.releaseBalloon()
+		else:
+			try:
+				balloonIsFalling = True
 
-                                if (numOfDataPoints > 0):
-                                        altitudeDataList.append(currAlt - altitudeDataList[-1]) # How much balloon has risen since last check
-                                else:
-                                        altitudeDataList.append(currAlt)
+				numOfDataPoints = len(self.altitudeDataList)
 
-                                if (numOfDataPoints > 10):                                # Only keep latest 10 height differences
-                                        self.altitudeDataList.pop(0)
-                                        
-                                        for deltaAlt in altitudeDataList:                 # Only check if we have enough data points
-                                                if (deltaAlt > 0):
-                                                        balloonIsFalling = False
-                                                        break
-                                        if (balloonIsFalling):
-                                                self.releaseBalloon()
-                                                        
-                        except:
-                                print("Error in calculating altitude change")
+				if (numOfDataPoints > 0):
+					altitudeDataList.append(currAlt - altitudeDataList[-1])  # How much balloon has risen since last check
+				else:
+					altitudeDataList.append(currAlt)
+
+				if (numOfDataPoints > 10):  # Only keep latest 10 height differences
+					self.altitudeDataList.pop(0)
+
+					for deltaAlt in altitudeDataList:  # Only check if we have enough data points
+						if (deltaAlt > 0):
+							balloonIsFalling = False
+							break
+					if (balloonIsFalling):
+						self.releaseBalloon()
+
+			except:
+				print("Error in calculating altitude change")
 
 	def processGpsData(self, gpsString):
 		validGpsData = False
@@ -269,46 +281,45 @@ class balloonScript():
 			try:
 				gpsSplit = gpsString.split(",")
 				if (len(gpsSplit) == 15):
-                                        time = gpsSplit[1][:6]
+					time = gpsSplit[1][:6]
 
-                                        latitude = gpsSplit[2]
-                                        if(len(latitude) > 0):
-                                                degrees = float(latitude[:2])
-                                                minutes = float(latitude[2:])
+					latitude = gpsSplit[2]
+					if(len(latitude) > 0):
+						degrees = float(latitude[:2])
+						minutes = float(latitude[2:])
 
-                                                if (gpsSplit[3] == "S"):
-                                                        latitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
-                                                else:
-                                                        latitude = "%4.5f" % (degrees + (minutes / 60))
-                                        else:
-                                                latitude = ''
+						if (gpsSplit[3] == "S"):
+							latitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
+						else:
+							latitude = "%4.5f" % (degrees + (minutes / 60))
+					else:
+						latitude = ''
 
-                               
-                                        longitude = gpsSplit[4]
-                                        if(len(longitude) > 0):         
-                                                degrees = float(longitude[:3])
-                                                minutes = float(longitude[3:])
-                                                if (gpsSplit[5] == "W"):
-                                                        longitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
-                                                else:
-                                                        longitude = "%4.5f" % (degrees + (minutes / 60))
-                                        else:
-                                                longitude = ''
+					longitude = gpsSplit[4]
+					if(len(longitude) > 0):
+						degrees = float(longitude[:3])
+						minutes = float(longitude[3:])
+						if (gpsSplit[5] == "W"):
+							longitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
+						else:
+							longitude = "%4.5f" % (degrees + (minutes / 60))
+					else:
+						longitude = ''
 
-                                        altitude = gpsSplit[9]
+					altitude = gpsSplit[9]
 
-                                        if (len(altitude) > 0):
-                                                try:
-                                                        self.processAltitude(float(altitude))
-                                                except:
-                                                        print("Unable to cast Altitude to a float")
+					if (len(altitude) > 0):
+						try:
+							self.processAltitude(float(altitude))
+						except:
+							print("Unable to cast Altitude to a float")
 
-                                        formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
-                                else:
-                                        print('line not correct: ' + str(gpsSplit))
+					formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
+				else:
+					print('line not correct: ' + str(gpsSplit))
 			except:
-                                print('Format data: no valid GPS string - exception caught')
-                                print('offending string: ' + str(gpsString))
+				print('Format data: no valid GPS string - exception caught')
+				print('offending string: ' + str(gpsString))
 				formattedGpsString = ",,,"
 				validGpsData = False
 
@@ -328,11 +339,12 @@ class balloonScript():
 						break  # This is our stop
 					else:
 						# print("Discarding unused data: " + serialInput)
+						logGpsData(serialInput)
 						serialInput = ""  # This is not the data we're looking for
 						retries -= 1
 				else:
-                                        print('GPS serial port is not waiting')
-                                        time.sleep(0.1)
+					print('GPS serial port is not waiting')
+					time.sleep(0.1)
 					iterationsToWait -= 1
 
 		except:
@@ -353,14 +365,14 @@ class balloonScript():
 			while(self.radioSerialPort.inWaiting()):
 				serialInput += self.radioSerialPort.readline()
 			if (len(serialInput) > 1):
-        			print("Serial input from radio: " + serialInput)
-        		else:
-                                print("No serial input to be read from the radio")
+				print("Serial input from radio: " + serialInput)
+			else:
+				print("No serial input to be read from the radio")
 		except:
 			print("Unable to read from radio serial port.")
 
 		return serialInput
-	
+
 
 	def sendSerialOutput(self, line):
 		try:
@@ -368,11 +380,11 @@ class balloonScript():
 			line = self.radioSerialPort.write(RADIO_CALLSIGN + "," + line + ",END_TX\n")
 		except:
 			print("Unable to write to radio serial port on " + RADIO_SERIAL_PORT)
-			
+
 	def openRadioSerialPort(self):
 		try:
-                        if (self.radioSerialPort.isOpen()):
-        			self.radioSerialPort.close()
+			if (self.radioSerialPort.isOpen()):
+				self.radioSerialPort.close()
 		except:
 			print("Failed to close the radio serial port " + RADIO_SERIAL_PORT + ". Was it ever opened?")
 
@@ -383,8 +395,8 @@ class balloonScript():
 
 	def openGpsSerialPort(self):
 		try:
-                        if (self.gpsSerialPort.isOpen()):
-        			self.gpsSerialPort.close()
+			if (self.gpsSerialPort.isOpen()):
+				self.gpsSerialPort.close()
 		except:
 			print("GPS serial port " + GPS_SERIAL_PORT + " won't close. May not have been open")
 
@@ -394,23 +406,13 @@ class balloonScript():
 			print("Failed to open the GPS serial port")
 
 	def releaseBalloon(self):
-		time.sleep(4)
-		print("Activating balloon release mechanism")
-		print("BRM is activated")
-		self.sendSerialOutput("BRM is activated")
-		print("BRM successfully released")
-		self.sendSerialOutput("BRM is released")
-		self.sendSerialOutput("MOCK: BRM Activated")
-		
 		GPIO.setmode(GPIO.BOARD)
 		GPIO.setup(11, GPIO.OUT)
-	
-	 	GPIO.output(11,0)
-	
-	 	password = raw_input()
-	
+
+	 	GPIO.output(11, 0)
+
 	 	while True:
-	 		if str(password) == 'SSAGhabRELEASE':
+	 		# if str(password) == 'SSAGhabRELEASE':
 	 			zero = time.time()
 	 			while time.time() - zero < 300:
 	 				try:
@@ -419,15 +421,15 @@ class balloonScript():
 	 					cv2.waitKey(1)
 	 				except:
 	 					pass
-	 				GPIO.output(11,1)
+	 				GPIO.output(11, 1)
 	 			try:
 	 				out.release()
 	 				cap.release()
 	 			except:
 	 				pass
 	 			break
-	 		else:
-	 			password = raw_input()
+	 		# else:
+	 			# password = raw_input()
 	 	GPIO.cleanup()
 
 		'''
@@ -442,9 +444,9 @@ class balloonScript():
 	def brmReset(self):
 		GPIO.setmode(GPIO.BOARD)
 		GPIO.setup(11, GPIO.OUT)
-	
-	 	GPIO.output(11,0)
-		
+
+	 	GPIO.output(11, 0)
+
 	def snapShot(self):
 		if str(snapCommand) == 'snapshot':
 			ret, frame = cap.read()
@@ -453,6 +455,32 @@ class balloonScript():
 		else:
 			snapCommand = raw_input()
 
+def logRadioMessage(line):
+	try:
+		radioLogFile = open(RADIO_LOG_FILE_LOCATION, "a")
+	except:
+		radioLogFile = open(RADIO_LOG_FILE_LOCATION, "w")
+
+	radioLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
+	radioLogFile.close
+
+def logScript(line):
+	try:
+		scriptLogFile = open(SCRIPT_LOG_FILE_LOCATION, "a")
+	except:
+		scriptLogFile = open(SCRIPT_LOG_FILE_LOCATION, "w")
+
+	scriptLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
+	scriptLogFile.close
+
+def logGpsData(line):
+	try:
+		gpsLogFile = open(GPS_LOG_FILE_LOCATION, "a")
+	except:
+		gpsLogFile = open(GPS_LOG_FILE_LOCATION, "w")
+
+	gpsLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
+	gpsLogFile.close
 
 if __name__ == '__main__':
 	runScript = balloonScript()
