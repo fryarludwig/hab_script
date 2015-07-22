@@ -15,8 +15,10 @@ Misc. Notes:
 """
 
 import serial
+import signal
 import math
 import smbus
+import subprocess
 import os
 import numpy
 import RPi.GPIO as GPIO
@@ -27,7 +29,7 @@ import datetime
 RADIO_CALLSIGN = "hab"
 RADIO_BAUDRATE = 9600
 
-GPS_BAUDRATE = 4800
+GPS_BAUDRATE = 38400
 
 GPS_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/gps_log.txt"
 RADIO_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/radio_log.txt"
@@ -56,13 +58,8 @@ registerAccY = 0xb4  # ADC CH 6
 registerAccZ = 0xf4  # ADC CH 7
 
 moment = [None, None, None]
+VALID_CAMERA = True
 
-
-try:
-        cap = cv2.VideoCapture(0)
-except:
-        print("invalid camera")
-        VALID_CAMERA = False
 '''
 if cap.isOpened() == False:
 	cap.open(0)
@@ -73,7 +70,17 @@ class balloonScript():
                 self.RADIO_SERIAL_PORT = "/dev/ttyUSB1"
                 self.GPS_SERIAL_PORT = "/dev/ttyUSB0"
                 
-                self.snapCount = 0
+                self.snapCount = 1
+                self.burstCount = 1
+
+                self.brmRecorded = False
+
+		try:
+        		self.cap = cv2.VideoCapture(0)
+			VALID_CAMERA = True
+		except:
+        		print("invalid camera")
+        		VALID_CAMERA = False
                 
                 '''
 
@@ -127,14 +134,17 @@ class balloonScript():
 		# Open serial ports
 		self.radioSerialPort = None
 		self.gpsSerialPort = None
-
-		self.openRadioSerialPort()
-		self.openGpsSerialPort()
-
+                
+                try:
+                        self.openRadioSerialPort()
+                        self.openGpsSerialPort()
+                except:
+                        pass
+                
 		self.runBalloonScript()
 
 	def runBalloonScript(self):
-
+                self.releaseBalloon()
 		while(True):
 			# send			
 			try:
@@ -185,6 +195,15 @@ class balloonScript():
 			self.balloonReleaseArmed = True
 			self.sendSerialOutput("ack,BRM_ARMED")
 			print("ARMING BALLOON")
+		elif (command == "SNAPSHOT"):
+                        print("SNAPSHOT " + str(self.burstCount) + " TAKEN")
+                        self.snapShot()
+                        self.sendSerialOutput("ack,SNAPSHOT_TAKEN")
+		elif (command == "RESET_BRM"):
+			self.balloonReleaseArmed = False
+			self.brmReset()
+			self.sendSerialOutput("ack,BRM_RESET")
+			print("BALLOON RELEASE RESET")
 		elif (command == "DISARM_BRM"):
 			self.balloonReleaseArmed = False
 			self.sendSerialOutput("ack,BRM_DISARMED")
@@ -194,16 +213,6 @@ class balloonScript():
 			self.releaseBalloon()
 			print("BALLOON RELEASE ACTIVATED")
 			self.sendSerialOutput("ack,BRM_ACTIVATED")
-		elif (command == "RESET_BRM"):
-			self.balloonReleaseArmed = False
-			self.brmReset()
-			self.sendSerialOutput("ack,BRM_RESET")
-			print("BALLOON RELEASE RESET")
-		elif (command == "SNAPSHOT"):
-                        self.snapShot()
-                        self.sendSerialOutput("ack,SNAPSHOT_TAKEN," + str(self.snapCount))
-                        print("SNAPSHOT " + str(self.snapCount) + " TAKEN")
-                        self.snapCount = self.snapCount + 1
 		else:
 			print("COMMAND NOT RECOGNIZED")
 			self.sendSerialOutput("ack,NO_OP")
@@ -282,9 +291,9 @@ class balloonScript():
 
 		try:
                         i = 0
-			rawAccelX = (bus.read_byte_data(address, registerAccX))
-			rawAccelY = (bus.read_byte_data(address, registerAccY))
-			rawAccelZ = (bus.read_byte_data(address, registerAccZ))
+			rawAccelX = str(bus.read_byte_data(address, registerAccX))
+			rawAccelY = str(bus.read_byte_data(address, registerAccY))
+			rawAccelZ = str(bus.read_byte_data(address, registerAccZ))
 			positionZero = [128,128,152]
                         rawMoment = [rawAccelX, rawAccelY, rawAccelZ]
                         while i < 3:
@@ -299,9 +308,9 @@ class balloonScript():
 			calculatedMagnitude = "NO_VAL"
 
 
-		return ",{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
+		return ",{},{},{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
 							calculatedBatteryTemp, calculatedVoltageBattery,
-							calculatedRHValue, calculatedMagnitude), (validSensorData > 0)
+							calculatedRHValue, rawAccelX, rawAccelY, rawAccelZ), (validSensorData > 0)
 
 	def processAltitude(self, currAlt):
                 try:
@@ -313,6 +322,13 @@ class balloonScript():
                                 if (numOfDataPoints > 3):                        # We need 3 consecutive data points
                                         logScript("3 heights above target: " + str(self.altitudeDataList))
                                         self.releaseBalloon()
+                        elif currAlt > (RELEASE_BALLOON_ALTITUDE - 500):
+                                if self.brmRecorded == False:
+                                        os.path('avconv -an -f video4linux2 -s 560x480  -r 15 -i /dev/video0 -timelimit 600 recordBRM.avi')
+                                        self.brmRecorded = True
+                                        print('recording balloon release')
+					self.sendSerialOutput('ack,BRM_RECORDING_STARTED')
+
                         else:
                                 self.altitudeDataList.clear()
                                 
@@ -479,17 +495,32 @@ class balloonScript():
                         GPIO.setwarnings(False)
                         GPIO.setup(23, GPIO.OUT)
                         
-                        GPIO.output(23, 0)
-
                         zero = time.time()
+                        i = 0
                         
-                        while time.time() - zero < TIME_TO_DRIVE_BRM:
-                                try:
-                                        ret, frame = cap.read()
-                                        out.write(frame)
-                                except:
-                                        pass
-                                GPIO.output(23, 0)
+                        if self.brmRecorded == False:
+				try:    				
+					print("Attempting to start recording")
+                                        subprocess.Popen('sudo avconv -an -f video4linux2 -s 560x480  -r 15 -i /dev/video0 -timelimit 600 /home/pi/hab_script/recordBRM.avi', shell = True)
+                                        
+					self.brmRecorded = True
+
+                                        print('recording balloon release')
+					self.sendSerialOutput('ack,BRM_RECORDING_STARTED')
+					
+					print ("Opening video capture again")
+		                        GPIO.output(23, 1)
+				except:
+					print("Unable to start recording!")
+					
+                                                               
+                        GPIO.output(23, 1)
+        
+			try:
+				self.snapShot()
+				self.snapShot()
+			except:
+				print ("Snapshots failed to take")
 
                         self.balloonReleaseActivated = True
                         
@@ -512,15 +543,12 @@ class balloonScript():
                         GPIO.setup(23, GPIO.OUT)
                         GPIO.setwarnings(False)
                         
-                        GPIO.output(23, 1)
+                        GPIO.output(23, 0)
                         
                         zero = time.time()
                         try:
                                 while time.time() - zero < TIME_TO_DRIVE_BRM:
-                                        ret, frame = cap.read()
-                                        out.write(frame)
-                                        cv2.waitKey(1)
-                                        GPIO.output(23, 1)
+                                        GPIO.output(23, 0)
                         except:
                                 pass
                         self.balloonReleaseActivated = False
@@ -531,17 +559,17 @@ class balloonScript():
 
         
 	def snapShot(self):
-                self.snapCount = 0
+                self.snapCount = 1
+                self.burstCount = 1
 
-                while os.path.isfile('/home/pi/hab_script/snapshots/snapshot' + str(self.snapCount) + '.png') == True:
+                while os.path.isfile('/home/pi/hab_script/snapshots/burst' + str(self.burstCount) + 'snapshot1.png') == True:
+                        self.burstCount = self.burstCount + 1
+			print(self.burstCount)
+
+                while self.snapCount <= 5:
+	                ret, frame = self.cap.read()
+                        cv2.imwrite('/home/pi/hab_script/snapshots/burst' + str(self.burstCount) + 'snapshot' + str(self.snapCount) + '.png', frame)
                         self.snapCount = self.snapCount + 1
-
-                ret, frame = cap.read()
-                if len(str(self.snapCount)) <= 1:
-                        cv2.imwrite('/home/pi/hab_script/snapshots/snapshot0' + str(self.snapCount) + '.png', frame)
-                elif len(str(self.snapCount)) > 1:
-                        cv2.imwrite('/home/pi/hab_script/snapshots/snapshot' + str(self.snapCount) + '.png', frame)
-                        
 
         def switchUSB(self):
                 if self.RADIO_SERIAL_PORT == "/dev/ttyUSB1":
@@ -587,6 +615,12 @@ def logGpsData(line):
 
 	gpsLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
 	gpsLogFile.close
+
 	
 if __name__ == '__main__':
-	runScript = balloonScript()
+	while(True):
+		try:
+			runScript = balloonScript()
+		except:
+			logScript("Program terminated, starting again")
+			time.sleep(5)
