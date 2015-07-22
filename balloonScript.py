@@ -33,8 +33,7 @@ GPS_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/gps_log.txt"
 RADIO_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/radio_log.txt"
 SCRIPT_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/balloon_script_log.txt"
 
-
-TIME_TO_DRIVE_BRM = 10
+TIME_TO_DRIVE_BRM = 15
 
 RELEASE_BALLOON_ALTITUDE = 21945    # 72,000 feet
 
@@ -61,9 +60,8 @@ moment = [None, None, None]
 
 try:
         cap = cv2.VideoCapture(0)
-        fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
-        out = cv2.VideoWriter('output.avi', fourcc, 25.0, (640, 480))
 except:
+        print("invalid camera")
         VALID_CAMERA = False
 '''
 if cap.isOpened() == False:
@@ -75,6 +73,17 @@ class balloonScript():
                 self.RADIO_SERIAL_PORT = "/dev/ttyUSB1"
                 self.GPS_SERIAL_PORT = "/dev/ttyUSB0"
                 
+                self.snapCount = 0
+                
+                '''
+
+                try:
+                        self.cap = cv2.VideoCapture(0)
+                        self.fourcc = cv2.VideoWriter_fourcc('I', 'Y', 'U', 'V')
+                        self.out = cv2.VideoWriter('output.avi', fourcc, 25.0, (640, 480))
+                except:
+                        VALID_CAMERA = False
+                '''
 		# Open output files
 
 		try:
@@ -125,6 +134,7 @@ class balloonScript():
 		self.runBalloonScript()
 
 	def runBalloonScript(self):
+
 		while(True):
 			# send			
 			try:
@@ -192,8 +202,8 @@ class balloonScript():
 		elif (command == "SNAPSHOT"):
                         self.snapShot()
                         self.sendSerialOutput("ack,SNAPSHOT_TAKEN," + str(self.snapCount))
-                        print("SNAPSHOT " + str(snapCount) + " TAKEN")
-                        snapCount = snapCount + 1
+                        print("SNAPSHOT " + str(self.snapCount) + " TAKEN")
+                        self.snapCount = self.snapCount + 1
 		else:
 			print("COMMAND NOT RECOGNIZED")
 			self.sendSerialOutput("ack,NO_OP")
@@ -293,7 +303,7 @@ class balloonScript():
 							calculatedBatteryTemp, calculatedVoltageBattery,
 							calculatedRHValue, calculatedMagnitude), (validSensorData > 0)
 
-	def processAltitude(self, currAlt):  
+	def processAltitude(self, currAlt):
                 try:
                         if (currAlt > RELEASE_BALLOON_ALTITUDE):
                                 numOfDataPoints = len(self.altitudeDataList)
@@ -344,6 +354,10 @@ class balloonScript():
 						longitude = ''
 
 					altitude = gpsSplit[9]
+					try:
+                                                self.processAltitude(float(altitude))
+                                        except:
+                                                pass
 
 					if (len(altitude) > 0):
 						try:
@@ -473,7 +487,6 @@ class balloonScript():
                                 try:
                                         ret, frame = cap.read()
                                         out.write(frame)
-                                        cv2.waitKey(1)
                                 except:
                                         pass
                                 GPIO.output(23, 0)
@@ -502,16 +515,14 @@ class balloonScript():
                         GPIO.output(23, 1)
                         
                         zero = time.time()
-                        
-                        while time.time() - zero < TIME_TO_DRIVE_BRM:
-                                try:
+                        try:
+                                while time.time() - zero < TIME_TO_DRIVE_BRM:
                                         ret, frame = cap.read()
                                         out.write(frame)
                                         cv2.waitKey(1)
-                                except:
-                                        pass
-                                GPIO.output(23, 1)
-                                
+                                        GPIO.output(23, 1)
+                        except:
+                                pass
                         self.balloonReleaseActivated = False
                         
                 except:
@@ -526,7 +537,11 @@ class balloonScript():
                         self.snapCount = self.snapCount + 1
 
                 ret, frame = cap.read()
-                cv2.imwrite('/home/pi/hab_script/snapshots/snapshot' + str(self.snapCount) + '.png', frame)
+                if len(str(self.snapCount)) <= 1:
+                        cv2.imwrite('/home/pi/hab_script/snapshots/snapshot0' + str(self.snapCount) + '.png', frame)
+                elif len(str(self.snapCount)) > 1:
+                        cv2.imwrite('/home/pi/hab_script/snapshots/snapshot' + str(self.snapCount) + '.png', frame)
+                        
 
         def switchUSB(self):
                 if self.RADIO_SERIAL_PORT == "/dev/ttyUSB1":
