@@ -48,7 +48,8 @@ RADIO_BAUDRATE = 38400
 
 GPS_BAUDRATE = 4800
 
-logFileLocationDictionary = {"GPS" : r"/home/pi/hab_script/logData/gps_log.txt",
+logFileLocationDictionary = {"STARTUP" : r"/home/pi/hab_script/logData/startcount_log.txt",
+                                                        "GPS" : r"/home/pi/hab_script/logData/gps_log.txt",
 							"RADIO" : r"/home/pi/hab_script/logData/radio_log.txt",
 							"SCRIPT" : r"/home/pi/hab_script/logData/balloon_script_log.txt",
 							"EXCEPTION" : r'/home/pi/hab_script/logData/exception_log.txt',
@@ -105,6 +106,8 @@ VALID_CAMERA = True
 
 class balloonScript():
 	def __init__(self, EXCEPTION_SUM = 0):
+                self.sentStartupNumber = False
+                
 		self.foundCorrectUSB = False
 		self.RADIO_SERIAL_PORT = "/dev/ttyUSB0"
 		self.GPS_SERIAL_PORT = "/dev/ttyUSB1"
@@ -144,9 +147,21 @@ class balloonScript():
 		self.runBalloonScript()
 
 	def runBalloonScript(self):
+
+                fstartup = open(logFileLocationDictionary["STARTUP"], 'r')
+
+                for string in fstartup:
+                        try:
+                                startupLine = string.split()
+                                startupNumber = int(startupLine[2])
+                        except:
+                                pass
+                log("STARTUP", str(startupNumber + 1))
+                
 		self.sendSerialOutput("init,STARTING_SCRIPT")
 		
 		while(True):
+
                         gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
                         sensorData, validSensorData = self.getSensorData()
         
@@ -165,6 +180,9 @@ class balloonScript():
 
 			log('RADIO', messageReceived)
 
+                        if self.foundCorrectUSB == True and self.sentStartupNumber == False:
+                                self.sendSerialOutput("init,STARTING_SCRIPT," + str(startupNumber + 1))
+                                
 
                         if self.intervalCount > 0:
                                 print('entered true')
