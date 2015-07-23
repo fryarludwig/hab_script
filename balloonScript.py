@@ -12,6 +12,25 @@ Misc. Notes:
 - GPS via UART freezes - unsure as to the reason why
 	- Currently running GPS via USB, and this works flawlessly
 
+TODO:
+Log and transmit exceptions
+        Almost done! Just need to verify all logging and transmitting
+Startup Transmission + counter
+        Still needs to be implemented
+                Have output file, write to it when script started
+                Every time we reenter the main loop, add an entry
+                Pull out the last entry, send it out on startup
+Photo timing and counter
+        Counter: Function added, still need to get counter from radio
+        Timing: Add a variable to hold the time. If time is expired, take photo, reset time
+Buffer radio input:
+        Not really needed - we've cut down the loop iteration time to almost nothing
+Threading:
+        Not really needed, see above
+Clear apt-get cache, delete files, etc
+        Yeah, let's do this
+Test everything, and then we're done with the flight software!
+
 """
 
 import serial
@@ -124,18 +143,13 @@ class balloonScript():
 		self.sendSerialOutput("warn,STARTING_SCRIPT")
 
 		while(True):
-	 		try:
-				time.sleep(1)
-				gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
-				sensorData, validSensorData = self.getSensorData()
+                        gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
+                        sensorData, validSensorData = self.getSensorData()
 
-				if (validGpsData or validSensorData):
-					self.sendSerialOutput("data," + gpsMessage + sensorData + str(EXCEPTION_SUM))
+                        if (validGpsData or validSensorData):
+                                self.sendSerialOutput("data," + gpsMessage + sensorData + ',' + str(EXCEPTION_SUM))
 
-				EXCPETION_SUM = 0
-	 		except:
-				print("Main loop handled uncaught exception. Exiting now.")
-				sys.exit()
+                        EXCPETION_SUM = 0
 
 			# receive
 			messageReceived = self.radioSerialInput()
@@ -143,7 +157,7 @@ class balloonScript():
 			# act on receive
 			self.handleMessage(messageReceived)
 
-			self.scriptLog.writelines(messageReceived)
+			log('RADIO', messageReceived)
 
 
 	def handleMessage(self, message):
@@ -165,8 +179,8 @@ class balloonScript():
 			log("RADIO", str(message))
 
 		except:
-			log("RADIO", "Data caused exception: " + str(message))
 			print("Exception in handling received message")
+			log("RADIO", "Data caused exception: " + str(message))
 			exceptionDictionary('MESSAGE_HANDLING', 10)
 
 	def processCommand(self, command):
@@ -660,5 +674,4 @@ if __name__ == '__main__':
 		except:
 			errorDictionary("MAIN_SCRIPT", "Program terminated, starting again")
 			print("\n\nProgram terminated, starting again\n\n")
-			sys.exit()
 			time.sleep(5)
