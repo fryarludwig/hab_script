@@ -1,0 +1,97 @@
+2015-07-22 13:42:12: Exception while attempting to find exception
+2015-07-22 13:42:12: Exception while reading accelerometer
+2015-07-22 13:42:12: Exception while attempting to find exception
+2015-07-22 13:42:14: Exception while attempting to find exception
+2015-07-22 13:42:14: Exception while reading accelerometer
+2015-07-22 13:42:14: Exception while attempting to find exception
+2015-07-22 13:42:16: Exception while attempting to find exception
+2015-07-22 13:42:16: Exception while reading accelerometer
+2015-07-22 13:42:16: Exception while attempting to find exception
+2015-07-22 13:42:19: Exception while attempting to find exception
+2015-07-22 13:42:19: Exception while reading accelerometer
+2015-07-22 13:42:19: Exception while attempting to find exception
+2015-07-22 13:42:21: Exception while attempting to find exception
+2015-07-22 13:42:21: Exception while reading accelerometer
+2015-07-22 13:42:21: Exception while attempting to find exception
+2015-07-22 13:42:22: Exception while receiving GPS packet
+2015-07-22 13:42:22: Exception while attempting to find exception
+2015-07-22 13:42:22: Exception while attempting to find exception
+2015-07-22 13:42:22: Exception while reading accelerometer
+2015-07-22 13:42:22: Exception while attempting to find exception
+2015-07-22 13:42:30: Exception while attempting to find exception
+2015-07-22 13:42:30: Exception while reading accelerometer
+2015-07-22 13:42:30: Exception while attempting to find exception
+2015-07-22 13:42:32: Exception while attempting to find exception
+2015-07-22 13:42:32: Exception while reading accelerometer
+2015-07-22 13:42:32: Exception while attempting to find exception
+2015-07-22 13:42:34: Exception while attempting to find exception
+2015-07-22 13:42:34: Exception while reading accelerometer
+2015-07-22 13:42:34: Exception while attempting to find exception
+2015-07-22 13:42:35: Exception while receiving GPS packet
+2015-07-22 13:42:35: Exception while attempting to find exception
+2015-07-22 13:42:35: Exception while attempting to find exception
+2015-07-22 13:42:35: Exception while reading accelerometer
+2015-07-22 13:42:35: Exception while attempting to find exception
+2015-07-22 13:42:40: Exception while attempting to find exception
+2015-07-22 13:42:40: Exception while reading accelerometer
+2015-07-22 13:42:40: Exception while attempting to find exception
+2015-07-22 13:42:42: Exception while attempting to find exception
+2015-07-22 13:42:42: Exception while reading accelerometer
+2015-07-22 13:42:42: Exception while attempting to find exception
+2015-07-22 13:42:44: Exception while attempting to find exception
+2015-07-22 13:42:44: Exception while reading accelerometer
+2015-07-22 13:42:44: Exception while attempting to find exception
+2015-07-22 13:42:46: Exception while attempting to find exception
+2015-07-22 13:42:46: Exception while reading accelerometer
+2015-07-22 13:42:46: Exception while attempting to find exception
+2015-07-22 13:42:48: Exception while attempting to find exception
+2015-07-22 13:42:52: Exception while reading accelerometer
+2015-07-22 13:42:52: Exception while attempting to find exception
+2015-07-22 13:43:42: Exception while attempting to find exception
+2015-07-22 13:43:42: Exception while reading accelerometer
+2015-07-22 13:43:42: Exception while attempting to find exception
+2015-07-22 13:43:45: Exception while attempting to find exception
+2015-07-22 13:43:45: Exception while reading accelerometer
+2015-07-22 13:43:45: Exception while attempting to find exception
+2015-07-22 13:43:47: Exception while attempting to find exception
+2015-07-22 13:43:47: Exception while reading accelerometer
+2015-07-22 13:43:47: Exception while attempting to find exception
+2015-07-22 13:43:49: Exception while receiving GPS packet
+2015-07-22 13:43:49: Exception while attempting to find exception
+2015-07-22 13:43:49: Exception while attempting to find exception
+2015-07-22 13:43:49: Exception while reading accelerometer
+2015-07-22 13:43:49: Exception while attempting to find exception
+2015-07-22 13:44:06: Exception while attempting to find exception
+2015-07-22 13:44:06: Exception while reading accelerometer
+2015-07-22 13:44:06: Exception while attempting to find exception
+2015-07-22 13:44:09: Exception while attempting to find exception
+2015-07-22 13:44:09: Exception while reading accelerometer
+2015-07-22 13:44:09: Exception while attempting to find exception
+2015-07-22 13:44:53: Exception while receiving GPS packet
+2015-07-22 13:44:53: Exception while attempting to find exception
+2015-07-22 13:44:53: Exception while attempting to find exception
+2015-07-22 13:44:53: Exception while reading accelerometer
+2015-07-22 13:44:53: Exception while attempting to find exception
+2015-07-22 13:44:59: Exception while attempting to find exception
+2015-07-22 13:44:59: Exception while reading accelerometer
+2015-07-22 13:44:59: Exception while attempting to find exception
+2015-07-22 13:45:54: Exception while reading accelerometer
+2015-07-22 13:45:54: Exception while attempting to find exception
+2015-07-22 13:48:15: Error while receiving error
+2015-07-22 13:48:24: Error while receiving error
+2015-07-22 13:48:32: Error while receiving error
+2015-07-22 13:48:41: Error while receiving error
+2015-07-22 13:48:51: Error while receiving error
+2015-07-22 13:49:43: Error while receiving error
+2015-07-22 13:49:50: Error while receiving error
+2015-07-22 13:51:21: Error while receiving error
+2015-07-22 13:51:29: Error while receiving error
+2015-07-22 13:52:09: Error while receiving error
+2015-07-22 13:52:15: Error while receiving error
+2015-07-22 13:52:21: Error while receiving error
+2015-07-22 13:52:27: Error while receiving error
+2015-07-22 13:53:55: Exception while reading accelerometer
+2015-07-22 13:54:12: Exception while reading accelerometer
+2015-07-22 13:54:12: Exception while attempting to find exception
+2015-07-22 13:56:58: Exception while reading accelerometer
+2015-07-22 13:56:58: Exception while attempting to find exception
