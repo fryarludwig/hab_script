@@ -43,3 +43,947 @@
 2015-07-23 09:41:55: Exception while receiving GPS packet
 2015-07-23 09:41:55: Exception while attempting to find exception
 2015-07-23 09:41:55: Error while receiving error
+2015-07-23 11:58:06: Error while receiving error
+2015-07-23 11:58:11: Error while receiving error
+2015-07-23 11:58:16: Error while receiving error
+2015-07-23 11:58:21: Error while receiving error
+2015-07-23 11:58:26: Error while receiving error
+2015-07-23 11:58:31: Error while receiving error
+2015-07-23 11:58:36: Error while receiving error
+2015-07-23 11:58:41: Error while receiving error
+2015-07-23 11:59:11: Error while receiving error
+2015-07-23 11:59:16: Error while receiving error
+2015-07-23 12:00:17: Exception while receiving radio packet
+2015-07-23 12:00:17: Exception while attempting to find exception
+2015-07-23 12:00:18: Exception while receiving GPS packet
+2015-07-23 12:00:18: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while transmitting through radio
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving radio packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving GPS packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while transmitting through radio
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving radio packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving GPS packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while transmitting through radio
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving radio packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving GPS packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while transmitting through radio
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving radio packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:19: Exception while receiving GPS packet
+2015-07-23 12:00:19: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while transmitting through radio
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving radio packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:20: Exception while receiving GPS packet
+2015-07-23 12:00:20: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while transmitting through radio
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving radio packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:21: Exception while receiving GPS packet
+2015-07-23 12:00:21: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while transmitting through radio
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving radio packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while receiving GPS packet
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:22: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving radio packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while receiving GPS packet
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:23: Exception while transmitting through radio
+2015-07-23 12:00:23: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while transmitting through radio
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while transmitting through radio
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while transmitting through radio
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while transmitting through radio
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while transmitting through radio
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while transmitting through radio
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving radio packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:24: Exception while receiving GPS packet
+2015-07-23 12:00:24: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while transmitting through radio
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving radio packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:25: Exception while receiving GPS packet
+2015-07-23 12:00:25: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while transmitting through radio
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while receiving radio packet
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while receiving GPS packet
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while transmitting through radio
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while receiving radio packet
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while receiving GPS packet
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while transmitting through radio
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while receiving radio packet
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:26: Exception while receiving GPS packet
+2015-07-23 12:00:26: Exception while attempting to find exception
+2015-07-23 12:00:33: Exception while receiving radio packet
+2015-07-23 12:00:33: Exception while attempting to find exception
+2015-07-23 12:00:33: Exception while receiving GPS packet
+2015-07-23 12:00:33: Exception while attempting to find exception
+2015-07-23 12:00:33: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while transmitting through radio
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving radio packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving GPS packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while transmitting through radio
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving radio packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving GPS packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while transmitting through radio
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving radio packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving GPS packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while transmitting through radio
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving radio packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving GPS packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while transmitting through radio
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving radio packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:34: Exception while receiving GPS packet
+2015-07-23 12:00:34: Exception while attempting to find exception
+2015-07-23 12:00:38: Error while receiving error
+2015-07-23 12:01:34: Exception while receiving radio packet
+2015-07-23 12:01:34: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while transmitting through radio
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving radio packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:35: Exception while receiving GPS packet
+2015-07-23 12:01:35: Exception while attempting to find exception
+2015-07-23 12:01:49: Error while receiving error
+2015-07-23 12:02:46: Exception while receiving GPS packet
+2015-07-23 12:02:46: Exception while attempting to find exception
+2015-07-23 12:02:47: Exception while receiving GPS packet
+2015-07-23 12:02:47: Exception while attempting to find exception
+2015-07-23 12:02:47: Exception while receiving radio packet
+2015-07-23 12:02:47: Exception while attempting to find exception
+2015-07-23 12:02:47: Error while receiving error
+2015-07-23 12:04:08: Exception while taking snapshot burst
+2015-07-23 12:04:08: Exception while attempting to find exception
+2015-07-23 12:04:09: Error while receiving error
+2015-07-23 12:04:43: Error while receiving error
+2015-07-23 12:05:56: Exception while taking snapshot burst
+2015-07-23 12:05:56: Exception while attempting to find exception
+2015-07-23 12:05:57: Exception while receiving GPS packet
+2015-07-23 12:05:57: Exception while attempting to find exception
+2015-07-23 12:05:57: Exception while receiving radio packet
+2015-07-23 12:05:57: Exception while attempting to find exception
+2015-07-23 12:05:57: Exception while taking snapshot burst
+2015-07-23 12:05:57: Exception while attempting to find exception
+2015-07-23 12:05:57: Error while receiving error
+2015-07-23 12:12:31: Error while receiving error
+2015-07-23 13:02:17: Error while receiving error
+2015-07-23 13:03:25: Error while receiving error
+2015-07-23 13:04:06: Error while receiving error
+2015-07-23 13:04:44: Error while receiving error
+2015-07-23 13:04:52: Error while receiving error
+2015-07-23 13:05:12: Error while receiving error
+2015-07-23 13:05:27: Error while receiving error
+2015-07-23 13:05:49: Error while receiving error
+2015-07-23 13:06:55: Exception while receiving GPS packet
+2015-07-23 13:06:55: Exception while attempting to find exception
+2015-07-23 13:06:56: Exception while receiving GPS packet
+2015-07-23 13:06:56: Exception while attempting to find exception
+2015-07-23 13:06:56: Exception while receiving GPS packet
+2015-07-23 13:06:56: Exception while attempting to find exception
+2015-07-23 13:06:56: Exception while receiving radio packet
+2015-07-23 13:06:56: Exception while attempting to find exception
+2015-07-23 13:06:56: Error while receiving error
+2015-07-23 13:12:22: Exception while taking snapshot burst
+2015-07-23 13:12:22: Exception while attempting to find exception
+2015-07-23 13:12:22: Error while receiving error
+2015-07-23 13:14:48: Exception while taking snapshot burst
+2015-07-23 13:14:48: Exception while attempting to find exception
+2015-07-23 13:14:48: Exception while receiving radio packet
+2015-07-23 13:14:48: Exception while attempting to find exception
+2015-07-23 13:14:49: Exception while receiving GPS packet
+2015-07-23 13:14:49: Exception while attempting to find exception
+2015-07-23 13:14:49: Exception while receiving GPS packet
+2015-07-23 13:14:49: Exception while attempting to find exception
+2015-07-23 13:14:49: Exception while receiving radio packet
+2015-07-23 13:14:49: Exception while attempting to find exception
+2015-07-23 13:14:49: Error while receiving error
+2015-07-23 13:17:20: Exception while taking snapshot burst
+2015-07-23 13:17:20: Exception while attempting to find exception
+2015-07-23 13:17:21: Exception while receiving GPS packet
+2015-07-23 13:17:21: Exception while attempting to find exception
+2015-07-23 13:17:21: Exception while receiving radio packet
+2015-07-23 13:17:21: Exception while attempting to find exception
+2015-07-23 13:17:21: Error while receiving error
+2015-07-23 13:42:28: Exception while receiving GPS packet
+2015-07-23 13:42:28: Exception while attempting to find exception
+2015-07-23 13:42:28: Exception while receiving GPS packet
+2015-07-23 13:42:28: Exception while attempting to find exception
+2015-07-23 13:42:28: Exception while receiving radio packet
+2015-07-23 13:42:28: Exception while attempting to find exception
+2015-07-23 13:42:28: Error while receiving error

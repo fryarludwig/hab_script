@@ -20,9 +20,6 @@ Startup Transmission + counter
                 Have output file, write to it when script started
                 Every time we reenter the main loop, add an entry
                 Pull out the last entry, send it out on startup
-Photo timing and counter
-        Counter: Function added, still need to get counter from radio
-        Timing: Add a variable to hold the time. If time is expired, take photo, reset time
 Buffer radio input:
         Not really needed - we've cut down the loop iteration time to almost nothing
 Threading:
@@ -66,24 +63,23 @@ TIME_TO_DRIVE_BRM = 15
 
 RELEASE_BALLOON_ALTITUDE = 21945  # 72,000 feet
 
-EXCEPTION_SUM = 0
-exceptionList = {'RADIO_TRANSMIT': 'Exception while transmitting through radio',
-		 'RADIO_RECEIVE': 'Exception while receiving radio packet',
-		 'GPS_RECEIVE': 'Exception while receiving GPS packet',
-		 'GPS_HANDLING': 'Exception while handling GPS packet',
-		 'TEMP_RPI': 'Exception while reading RPi temperature',
-		 'TEMP_EXT': 'Exception while reading external temperature',
-		 'TEMP_BAT': 'Exception while reading battery temperature',
-		 'VOLT_BAT': 'Exception while reading battery voltage',
-		 'RH': 'Exception while reading humidity sensor',
-		 'ACCEL': 'Exception while reading accelerometer',
-		 'MESSAGE_HANDLING': 'Exception while processing line',
-		 'VIDEO_RECORD': 'Exception while initiating video',
-		 'BALLOON_RELEASE': 'Exception while releasing balloon',
-		 'BRM_RESET': 'Exception while resetting BRM',
-		 'USB_SWITCH': 'Exception while switching radio and GPS USB ports',
-		 'SNAPSHOT': 'Exception while taking snapshot burst',
-		 'MAIN_SCRIPT': 'Exception while running script',
+exceptionList = {'RADIO_TRANSMIT': 'Exception while transmitting through radio',        #1
+		 'RADIO_RECEIVE': 'Exception while receiving radio packet',             #2
+		 'GPS_RECEIVE': 'Exception while receiving GPS packet',                 #3
+		 'GPS_HANDLING': 'Exception while handling GPS packet',                 #16
+		 'TEMP_RPI': 'Exception while reading RPi temperature',                 #4
+		 'TEMP_EXT': 'Exception while reading external temperature',            #5
+		 'TEMP_BAT': 'Exception while reading battery temperature',             #6
+		 'VOLT_BAT': 'Exception while reading battery voltage',                 #7
+		 'RH': 'Exception while reading humidity sensor',                       #8
+		 'ACCEL': 'Exception while reading accelerometer',                      #9
+		 'MESSAGE_HANDLING': 'Exception while processing line',                 #10
+		 'VIDEO_RECORD': 'Exception while initiating video',                    #11
+		 'BALLOON_RELEASE': 'Exception while releasing balloon',                #12
+		 'BRM_RESET': 'Exception while resetting BRM',                          #13
+		 'USB_SWITCH': 'Exception while switching radio and GPS USB ports',     #14
+		 'SNAPSHOT': 'Exception while taking snapshot burst',                   #0
+		 'MAIN_SCRIPT': 'Exception while running script, restarting',           #15
 		 'UNKNOWN': 'Unknown exception occured'
 		 }
 
@@ -99,7 +95,7 @@ registerTrpi = 0x84  # ADC CH 0
 registerText = 0xc4  # ADC CH 1
 registerTbat = 0x94  # ADC CH 2
 registerVbat = 0xd4  # ADC CH 3
-registerRH = 0xa4  # ADC CH 4
+registerRH   = 0xa4  # ADC CH 4
 registerAccX = 0xe4  # ADC CH 5
 registerAccY = 0xb4  # ADC CH 6
 registerAccZ = 0xf4  # ADC CH 7
@@ -108,7 +104,7 @@ moment = [None, None, None]
 VALID_CAMERA = True
 
 class balloonScript():
-	def __init__(self):
+	def __init__(self, EXCEPTION_SUM = 0):
 		self.foundCorrectUSB = False
 		self.RADIO_SERIAL_PORT = "/dev/ttyUSB0"
 		self.GPS_SERIAL_PORT = "/dev/ttyUSB1"
@@ -116,7 +112,15 @@ class balloonScript():
 		self.snapCount = 1
 		self.burstCount = 1
 		self.videoCount = 1
+		self.snapInterval = time.time()
+		self.numberOfPhotosToBurst = 5
+		self.intervalDuration = 5
+		self.intervalCount = 0
+		self.intervalSnapNumber = 5
+		self.snapRepeat = False
 
+		self.EXCEPTION_SUM = EXCEPTION_SUM
+		
 		self.brmRecorded = False
 		self.videoEndTime = time.mktime(datetime.datetime.now().timetuple())
 
@@ -140,16 +144,18 @@ class balloonScript():
 		self.runBalloonScript()
 
 	def runBalloonScript(self):
-		self.sendSerialOutput("warn,STARTING_SCRIPT")
-
+		self.sendSerialOutput("init,STARTING_SCRIPT")
+		
 		while(True):
                         gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
                         sensorData, validSensorData = self.getSensorData()
-
+        
                         if (validGpsData or validSensorData):
-                                self.sendSerialOutput("data," + gpsMessage + sensorData + ',' + str(EXCEPTION_SUM))
+                                
+                                print('Sending serial out')
+                                self.sendSerialOutput("data," + gpsMessage + sensorData + ',' + str(self.EXCEPTION_SUM))
 
-                        EXCPETION_SUM = 0
+                        self.EXCEPTION_SUM = 0
 
 			# receive
 			messageReceived = self.radioSerialInput()
@@ -158,6 +164,22 @@ class balloonScript():
 			self.handleMessage(messageReceived)
 
 			log('RADIO', messageReceived)
+
+
+                        if self.intervalCount > 0:
+                                print('entered true')
+                                if (time.time() - self.snapInterval) >= self.intervalDuration:
+                                        self.snapShot(self.numberOfPhotosToBurst)
+                                        self.snapInterval = time.time()
+                                        self.intervalCount += 1
+
+                        else:
+                                print('entered else')
+                                self.snapShot(self.numberOfPhotosToBurst)
+                                self.intervalCount += 1
+
+
+			
 
 
 	def handleMessage(self, message):
@@ -188,12 +210,20 @@ class balloonScript():
 			self.balloonReleaseArmed = True
 			self.sendSerialOutput("ack,BRM_ARMED")
 			print("ARMING BALLOON")
-		elif (command == "SNAPSHOT"):
-			print("SNAPSHOT " + str(self.burstCount) + " TAKEN")
-			self.snapShot()
-			self.sendSerialOutput("ack,SNAPSHOT_TAKEN")
+		elif (command[:8] == "SNAPSHOT"):
+                        commandSplit = command.split(',')
+                        try:
+                                if int(commandSplit[2]) == 0:
+                                        self.snapShot(self.numberOfPhotosToBurst)
+                                else:                                 
+                                        self.numberOfPhotosToBurst = int(commandSplit[1])
+                                        self.intervalDuration = int(commandSplit[2])
+                        
+                                self.sendSerialOutput('ack,SNAPSHOT_UPDATE,' + str(commandSplit[1]) + ',' + str(commandSplit[2]))
+                        except:
+                                log('RADIO', 'Unable to parse snapshot command')
 		elif (command == "DISK_SPACE"):
-			self.sendSerialOutput("ack," + self.getDiskSpace())
+			self.sendSerialOutput("ack,DISK," + self.getDiskSpace())
 		elif (command == "RESET_BRM"):
 			self.balloonReleaseArmed = False
 			self.brmReset()
@@ -311,63 +341,65 @@ class balloonScript():
 
 
 	def processGpsData(self, gpsString):
-		validGpsData = False
-		formattedGpsString = 'NULL,NULL,NULL,NULL'
+                try:
+                        validGpsData = False
+                        formattedGpsString = 'NULL,NULL,NULL,NULL'
 
-		if (gpsString != "NO_GPS_DATA\n" and len(gpsString) > 0):
-			try:
-				gpsSplit = gpsString.split(",")
-				if (len(gpsSplit) == 15):
-					time = gpsSplit[1][:6]
+                        if (gpsString != "NO_GPS_DATA\n" and len(gpsString) > 0):
+                                try:
+                                        gpsSplit = gpsString.split(",")
+                                        if (len(gpsSplit) == 15):
+                                                time = gpsSplit[1][:6]
 
-					latitude = gpsSplit[2]
-					if(len(latitude) > 0):
-						degrees = float(latitude[:2])
-						minutes = float(latitude[2:])
+                                                latitude = gpsSplit[2]
+                                                if(len(latitude) > 0):
+                                                        degrees = float(latitude[:2])
+                                                        minutes = float(latitude[2:])
 
-						if (gpsSplit[3] == "S"):
-							latitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
-						else:
-							latitude = "%4.5f" % (degrees + (minutes / 60))
-					else:
-						latitude = ''
+                                                        if (gpsSplit[3] == "S"):
+                                                                latitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
+                                                        else:
+                                                                latitude = "%4.5f" % (degrees + (minutes / 60))
+                                                else:
+                                                        latitude = ''
 
-					longitude = gpsSplit[4]
-					if(len(longitude) > 0):
-						degrees = float(longitude[:3])
-						minutes = float(longitude[3:])
-						if (gpsSplit[5] == "W"):
-							longitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
-						else:
-							longitude = "%4.5f" % (degrees + (minutes / 60))
-					else:
-						longitude = ''
+                                                longitude = gpsSplit[4]
+                                                if(len(longitude) > 0):
+                                                        degrees = float(longitude[:3])
+                                                        minutes = float(longitude[3:])
+                                                        if (gpsSplit[5] == "W"):
+                                                                longitude = "%4.5f" % (-1 * (degrees + (minutes / 60)))
+                                                        else:
+                                                                longitude = "%4.5f" % (degrees + (minutes / 60))
+                                                else:
+                                                        longitude = ''
 
-					altitude = gpsSplit[9]
-					try:
-						self.processAltitude(float(altitude))
-					except:
-						pass
+                                                altitude = gpsSplit[9]
+                                                try:
+                                                        self.processAltitude(float(altitude))
+                                                except:
+                                                        pass
 
-					if (len(altitude) > 0):
-						try:
-							self.processAltitude(float(altitude))
-						except:
-							print("Unable to cast Altitude to a float")
+                                                if (len(altitude) > 0):
+                                                        try:
+                                                                self.processAltitude(float(altitude))
+                                                        except:
+                                                                print("Unable to cast Altitude to a float")
 
-					formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
-				else:
-					log("GPS", 'Line length unexpected - incomplete packet: ' + str(gpsSplit))
-					print('Line length unexpected - incomplete packet: ' + str(gpsSplit))
-			except:
-				print('Format data: no valid GPS string - exception caught')
-				exceptionDictionary('LINE_HANDLING', 10)
-				print('offending string: ' + str(gpsString))
-				formattedGpsString = ",,,"
-				validGpsData = False
+                                                formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
+                                        else:
+                                                log("GPS", 'Line length unexpected - incomplete packet: ' + str(gpsSplit))
+                                                print('Line length unexpected - incomplete packet: ' + str(gpsSplit))
+                                except:
+                                        print('Format data: no valid GPS string - exception caught')
+                                        exceptionDictionary('LINE_HANDLING', 10)
+                                        print('offending string: ' + str(gpsString))
+                                        formattedGpsString = ",,,"
+                                        validGpsData = False
 
-		return formattedGpsString, validGpsData
-
+                        return formattedGpsString, validGpsData
+                except:
+                        errorDictionary('GPS_HANDLING', 16)
 	def gpsSerialInput(self):
 		messageReceived = "NO_GPS_DATA\n"
 		serialInput = ""
@@ -435,6 +467,7 @@ class balloonScript():
 
 	def sendSerialOutput(self, line):
 		try:
+                        print(RADIO_CALLSIGN + "," + str(line) + ",END_TX\n")
 			self.radioSerialPort.write(RADIO_CALLSIGN + "," + str(line) + ",END_TX\n")
 		except:
 			print("Unable to write to radio serial port on " + self.RADIO_SERIAL_PORT)
@@ -476,7 +509,7 @@ class balloonScript():
 
 			if self.brmRecorded == False:
 				try:
-					self.recordVideo(20)
+					self.recordVideo(180)
 
 					self.brmRecorded = True
 
@@ -528,9 +561,6 @@ class balloonScript():
 			print("Checking if camera is available")
 			print("Video time left: " + str(timeLeftToRecord))
 
-			if ((timeLeftToRecord) >= 0 and (timeLeftToRecord) < 5):
-				time.sleep(timeLeftToRecord + 1)
-
 			if ((timeLeftToRecord) < 0):
 				print("Attempting to initialize camera")
 				cap = cv2.VideoCapture(0)
@@ -555,29 +585,29 @@ class balloonScript():
 			exceptionDictionary('SNAPSHOT', 0)
 
 	def recordVideo(self, duration):
+                try:
 
-		currTimeInSeconds = time.mktime(datetime.datetime.now().timetuple())
-		timeLeftToRecord = self.videoEndTime - currTimeInSeconds
+                        currTimeInSeconds = time.mktime(datetime.datetime.now().timetuple())
+                        timeLeftToRecord = self.videoEndTime - currTimeInSeconds
 
-		print("Video time left: " + str(timeLeftToRecord))
-		if ((timeLeftToRecord) >= 0 and (timeLeftToRecord) < 5):
-			time.sleep(timeLeftToRecord + 1)
+                        print("Video time left: " + str(timeLeftToRecord))
 
-		if ((timeLeftToRecord) < 0):
-			while os.path.isfile('/home/pi/hab_script/videos/video' + str(self.videoCount) + '.avi'):
-				self.videoCount += 1
+                        if ((timeLeftToRecord) < 0):
+                                while os.path.isfile('/home/pi/hab_script/videos/video' + str(self.videoCount) + '.avi'):
+                                        self.videoCount += 1
 
-			videoRecordingString = "sudo avconv -an -f video4linux2 -s 560x480  -r 15 -i /dev/video0 -timelimit "
-			videoRecordingString += (str(duration) + " /home/pi/hab_script/videos/video" + str(self.videoCount) + ".avi")
-			subprocess.Popen(videoRecordingString, shell = True)
+                                videoRecordingString = "sudo avconv -an -f video4linux2 -s 560x480  -r 15 -i /dev/video0 -timelimit "
+                                videoRecordingString += (str(duration) + " /home/pi/hab_script/videos/video" + str(self.videoCount) + ".avi")
+                                subprocess.Popen(videoRecordingString, shell = True)
 
-			self.videoEndTime = (currTimeInSeconds + duration + 10)
+                                self.videoEndTime = (currTimeInSeconds + duration + 10)
 
-			self.videoCount += 1
+                                self.videoCount += 1
 
-		else:
-			print("Cannot record video - still recording video for the next " + str(timeLeftToRecord) + ' seconds')
-
+                        else:
+                                print("Cannot record video - still recording video for the next " + str(timeLeftToRecord) + ' seconds')
+                except:
+                        exceptionDictionary('VIDEO_RECORD',11)
 	def switchUSB(self):
 		try:
 			if self.RADIO_SERIAL_PORT == "/dev/ttyUSB1":
@@ -610,31 +640,31 @@ def log(type, line):
 
 def errorDictionary(error, message):
 	if error == "SNAPSHOT":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 0)
+		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << 0)
 		log("EXCEPTION", message)
 	elif error == "RADIO_TRANSMIT":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 1)
+		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << 1)
 		log("EXCEPTION", message)
 	elif error == "RADIO_RECEIVE":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 2)
+		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << 2)
 		log("EXCEPTION", message)
 	elif error == "GPS_RECEIVE":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 3)
+		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 3)
 		log("EXCEPTION", message)
 	elif error == "TEMP_RPI":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 4)
+		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 4)
 		log("EXCEPTION", message)
 	elif error == "TEMP_EXT":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 5)
+		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 5)
 		log("EXCEPTION", message)
 	elif error == "TEMP_BAT":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 6)
+		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 6)
 		log("EXCEPTION", message)
 	elif error == "VOLT_BAT":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 7)
+		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 7)
 		log("EXCEPTION", message)
 	elif error == "RH":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 8)
+		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 8)
 		log("EXCEPTION", message)
 	elif error == "ACCEL":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 9)
@@ -663,15 +693,17 @@ def errorDictionary(error, message):
 def exceptionDictionary(error, bitShifter):
 	try:
 		log("EXCEPTION", exceptionList[str(error)])
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << int(bitShifter))
+		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << int(bitShifter))
 	except:
 		log("EXCEPTION", 'Exception while attempting to find exception')
 
 if __name__ == '__main__':
+        EXCEPTION_SUM = 0
+        
 	while(True):
 		try:
-			runScript = balloonScript()
+			runScript = balloonScript(EXCEPTION_SUM)
 		except:
-			errorDictionary("MAIN_SCRIPT", "Program terminated, starting again")
+			errorDictionary("MAIN_SCRIPT", 15)
 			print("\n\nProgram terminated, starting again\n\n")
 			time.sleep(5)
