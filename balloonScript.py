@@ -32,9 +32,16 @@ RADIO_BAUDRATE = 38400
 
 GPS_BAUDRATE = 4800
 
-GPS_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/gps_log.txt"
-RADIO_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/radio_log.txt"
-SCRIPT_LOG_FILE_LOCATION = r"/home/pi/hab_script/logData/balloon_script_log.txt"
+logFileLocationDictionary = {"GPS" : r"/home/pi/hab_script/logData/gps_log.txt",
+							"RADIO" : r"/home/pi/hab_script/logData/radio_log.txt",
+							"SCRIPT" : r"/home/pi/hab_script/logData/balloon_script_log.txt",
+							"EXCEPTION" : r'/home/pi/hab_script/logData/exception_log.txt',
+							"RPI_TEMP" : r'/home/pi/hab_script/sensorData/temp_raspi.txt',
+							"EXT_TEMP" : r'/home/pi/hab_script/sensorData/temp_external.txt',
+							"BAT_TEMP" : r'/home/pi/hab_script/sensorData/temp_batteries.txt',
+							"VOLTAGE" : r'/home/pi/hab_script/sensorData/voltage_batteries.txt',
+							"HUMIDITY" : r'/home/pi/hab_script/sensorData/humidity.txt',
+							"ACCEL" : r'/home/pi/hab_script/sensorData/accelerometer.txt'}
 
 TIME_TO_DRIVE_BRM = 15
 
@@ -93,17 +100,6 @@ class balloonScript():
 
 		self.brmRecorded = False
 		self.videoEndTime = time.mktime(datetime.datetime.now().timetuple())
-
-		# Open output files
-
-		self.scriptLog = open(SCRIPT_LOG_FILE_LOCATION, "a")
-		self.gpsLog = open(GPS_LOG_FILE_LOCATION, "a")
-		self.fTrpi = open('/home/pi/hab_script/sensorData/temp_raspi.txt', 'a')
-		self.fText = open('/home/pi/hab_script/sensorData/temp_external.txt', 'a')
-		self.fTbat = open('/home/pi/hab_script/sensorData/temp_batteries.txt', 'a')
-		self.fVbat = open('/home/pi/hab_script/sensorData/voltage_batteries.txt', 'a')
-		self.fRH = open('/home/pi/hab_script/sensorData/humidity.txt', 'a')
-		self.fAcc = open('/home/pi/hab_script/sensorData/accelerometer.txt', 'a')
 
 		# Set up variables to be used by the script
 		self.altitudeDataList = []
@@ -166,10 +162,10 @@ class balloonScript():
 						if (line[7:10] == "cmd"):
 							self.processCommand(line[11:])
 
-			logRadioMessage(str(message))
+			log("RADIO", str(message))
 
 		except:
-			logRadioMessage("Data caused exception: " + str(message))
+			log("RADIO", "Data caused exception: " + str(message))
 			print("Exception in handling received message")
 			exceptionDictionary('MESSAGE_HANDLING', 10)
 
@@ -220,9 +216,7 @@ class balloonScript():
 			Rrpi = 51800 * ((Vin / VTrpi) - 1)
 			PiTempRHPurpose = (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
 			calculatedPiTemp = "%4.1f" % (1 / ((.0014782389) + (.00023632193 * (math.log(Rrpi))) + ((.00000011403386 * (math.log(Rrpi))) ** 3)) - 273.15)
-			self.fTrpi = open('/home/pi/hab_script/sensorData/temp_raspi.txt', 'a')
-			self.fTrpi.write(str(VTrpi) + ' ' + calculatedPiTemp + '\n')
-			self.fTrpi.close()
+			log("RPI_TEMP", str(VTrpi) + ' ' + calculatedPiTemp)
 		except:
 			validSensorData -= 1
 			exceptionDictionary('TEMP_RPI', 4)
@@ -232,9 +226,7 @@ class balloonScript():
 			VText = rawValExternalTemp * 3.3 / 255
 			Rext = 51800 * ((Vin / VText) - 1)
 			calculatedExternalTemp = "%4.1f" % (1 / ((.0014732609) + (.00023727640 * (math.log(Rext))) + ((.00000010814580 * (math.log(Rext))) ** 3)) - 273.15)
-			self.fText = open('/home/pi/hab_script/sensorData/temp_external.txt', 'a')
-			self.fText.write(str(VText) + ' ' + calculatedExternalTemp + '\n')
-			self.fText.close()
+			log("EXT_TEMP", str(VText) + ' ' + calculatedExternalTemp)
 		except:
 			validSensorData -= 1
 			exceptionDictionary('TEMP_EXT', 5)
@@ -244,9 +236,7 @@ class balloonScript():
 			VTbat = rawValBatteryTemp * 3.3 / 255
 			Rbat = 51800 * ((Vin / VTbat) - 1)
 			calculatedBatteryTemp = "%4.1f" % ((1 / ((.0014721232) + (.00023728796 * (math.log(Rbat))) + ((.00000010792173 * (math.log(Rbat))) ** 3)) - 273.15))
-			self.fTbat = open('/home/pi/hab_script/sensorData/temp_batteries.txt', 'a')
-			self.fTbat.write(str(VTbat) + ' ' + calculatedBatteryTemp + '\n')
-			self.fTbat.close()
+			log("BAT_TEMP", str(VTbat) + ' ' + calculatedBatteryTemp)
 		except:
 			validSensorData -= 1
 			exceptionDictionary('TEMP_BAT', 6)
@@ -254,9 +244,7 @@ class balloonScript():
 		try:
 			rawValBatteryVoltage = bus.read_byte_data(address, registerVbat)
 			calculatedVoltageBattery = "%4.1f" % (((10.08 + 30.05) / 10.08) * rawValBatteryVoltage * 3.3 / 255)
-			self.fVbat = open('/home/pi/hab_script/sensorData/voltage_batteries.txt', 'a')
-			self.fVbat.write(str(rawValBatteryVoltage) + ' ' + calculatedVoltageBattery + '\n')
-			self.fVbat.close()
+			log("VOLTAGE", str(rawValBatteryVoltage) + ' ' + calculatedVoltageBattery)
 		except:
 			validSensorData -= 1
 			exceptionDictionary('VOLT_BAT', 7)
@@ -266,31 +254,19 @@ class balloonScript():
 			VRH = rawValRH * 3.3 * ((10.1 + 38.5) / 38.5) / 255
 			RHApprox = ((VRH / Vsupply) - .16) / .0062
 			calculatedRHValue = "%4.1f" % ((RHApprox) / (1.0546 - (.00216 * PiTempRHPurpose)))
-			self.fRH = open('/home/pi/hab_script/sensorData/humidity.txt', 'a')
-			self.fRH.write(str(rawValRH) + ' ' + calculatedRHValue + '\n')
-			self.fRH.close()
+			log("HUMIDITY", str(rawValRH) + ' ' + calculatedRHValue)
 		except:
 			validSensorData -= 1
 			exceptionDictionary('RH', 8)
 
 		try:
-			i = 0
 			rawAccelX = str(bus.read_byte_data(address, registerAccX))
 			rawAccelY = str(bus.read_byte_data(address, registerAccY))
 			rawAccelZ = str(bus.read_byte_data(address, registerAccZ))
-			positionZero = [128, 128, 152]
-			rawMoment = [rawAccelX, rawAccelY, rawAccelZ]
-			while i < 3:
-				moment[i] = abs(rawMoment[i] - positionZero[i])
-				i = i + 1
-			calculatedMagnitude = round(((moment[0]) ** 2 + (moment[1]) ** 2 + (moment[2]) ** 2) ** (.5), 2)
-			self.fAcc = open('/home/pi/hab_script/sensorData/accelerometer.txt', 'a')
-			self.fAcc.write(str(moment[0]) + ' ' + str(moment[1]) + ' ' + str(moment[2]) + ' ' + str(calculatedMagnitude) + '\n')
-			self.fAcc.close()
+			log("ACCEL", str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ))
 		except:
 			validSensorData -= 1
 			exceptionDictionary('ACCEL', 9)
-
 
 		return ",{},{},{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
 							calculatedBatteryTemp, calculatedVoltageBattery,
@@ -304,7 +280,7 @@ class balloonScript():
 				self.altitudeDataList.append(currAlt)
 
 				if (numOfDataPoints > 3):  # We need 3 consecutive data points
-					logScript("3 heights above target: " + str(self.altitudeDataList))
+					log("SCRIPT", "3 heights above target: " + str(self.altitudeDataList))
 					self.releaseBalloon()
 			elif currAlt > (RELEASE_BALLOON_ALTITUDE - 500):
 				if self.brmRecorded == False:
@@ -367,7 +343,7 @@ class balloonScript():
 
 					formattedGpsString = "{},{},{},{}".format(time, latitude, longitude, altitude)
 				else:
-					logGpsData('Line length unexpected - incomplete packet: ' + str(gpsSplit))
+					log("GPS", 'Line length unexpected - incomplete packet: ' + str(gpsSplit))
 					print('Line length unexpected - incomplete packet: ' + str(gpsSplit))
 			except:
 				print('Format data: no valid GPS string - exception caught')
@@ -398,7 +374,7 @@ class balloonScript():
 						break  # This is our stop
 					else:
 						# print("Discarding unused data: " + serialInput)
-						logGpsData(serialInput)
+						log("GPS", serialInput)
 						serialInput = ""  # This is not the data we're looking for
 						retries -= 1
 				else:
@@ -417,7 +393,7 @@ class balloonScript():
 		elif not (self.foundCorrectUSB):
 			self.switchUSB()
 
-		logGpsData(messageReceived)
+		log("GPS", messageReceived)
 		print(messageReceived)
 		return messageReceived
 
@@ -508,7 +484,7 @@ class balloonScript():
 			self.balloonReleaseActivated = True
 
 		except:
-			logScript("Unable to release the balloon. Unknown exception occurred")
+			log("SCRIPT", "Unable to release the balloon. Unknown exception occurred")
 			self.radioSerialOutput("error,release_balloon_cmd_failed")
 			exceptionDictionary('BALLOON_RELEASE', 12)
 
@@ -539,7 +515,7 @@ class balloonScript():
 			print("Video time left: " + str(timeLeftToRecord))
 
 			if ((timeLeftToRecord) >= 0 and (timeLeftToRecord) < 5):
-				sleep(timeLeftToRecord + 1)
+				time.sleep(timeLeftToRecord + 1)
 
 			if ((timeLeftToRecord) < 0):
 				print("Attempting to initialize camera")
@@ -571,7 +547,7 @@ class balloonScript():
 
 		print("Video time left: " + str(timeLeftToRecord))
 		if ((timeLeftToRecord) >= 0 and (timeLeftToRecord) < 5):
-			sleep(timeLeftToRecord + 1)
+			time.sleep(timeLeftToRecord + 1)
 
 		if ((timeLeftToRecord) < 0):
 			while os.path.isfile('/home/pi/hab_script/videos/video' + str(self.videoCount) + '.avi'):
@@ -612,90 +588,70 @@ class balloonScript():
 		output = subprocess.check_output(['df', '-h'])
 		return str(output.split()[10])
 
+def log(type, line):
+	logFile = open(logFileLocationDictionary[type], 'a')
 
-def logRadioMessage(line):
-	radioLogFile = open(RADIO_LOG_FILE_LOCATION, "a")
-
-	radioLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
-	radioLogFile.close
-
-def logScript(line):
-	scriptLogFile = open(SCRIPT_LOG_FILE_LOCATION, "a")
-
-	scriptLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
-	scriptLogFile.close
-
-def logGpsData(line):
-	gpsLogFile = open(GPS_LOG_FILE_LOCATION, "a")
-
-	gpsLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
-	gpsLogFile.close
-
-def logError(line):
-	exceptionLogFile = open('/home/pi/hab_script/logData/exception_log.txt', "a")
-
-	exceptionLogFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
-	exceptionLogFile.close
-
+	logFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
+	logFile.close
 
 def errorDictionary(error, message):
 	if error == "SNAPSHOT":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 0)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "RADIO_TRANSMIT":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 1)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "RADIO_RECEIVE":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 2)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "GPS_RECEIVE":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 3)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "TEMP_RPI":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 4)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "TEMP_EXT":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 5)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "TEMP_BAT":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 6)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "VOLT_BAT":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 7)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "RH":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 8)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "ACCEL":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 9)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "MESSAGE_HANDLING":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 10)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "VIDEO_RECORD":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 11)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "BALLOON_RELEASE":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 12)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "BRM_RESET":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 13)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "USB_SWITCH":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 14)
-		logError(message)
+		log("EXCEPTION", message)
 	elif error == "UNKNOWN":
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 15)
-		logError(message)
+		log("EXCEPTION", message)
 	else:
-		logError('Error while receiving error')
+		log("EXCEPTION", 'Error while receiving error')
 
 def exceptionDictionary(error, bitShifter):
 	try:
-		logError(exceptionList[str(error)])
+		log("EXCEPTION", exceptionList[str(error)])
 		EXCEPTION_SUM = EXCEPTION_SUM + (1 << int(bitShifter))
 	except:
-		logError('Exception while attempting to find exception')
+		log("EXCEPTION", 'Exception while attempting to find exception')
 
 if __name__ == '__main__':
 	while(True):
