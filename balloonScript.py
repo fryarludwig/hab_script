@@ -13,20 +13,7 @@ Misc. Notes:
 	- Currently running GPS via USB, and this works flawlessly
 
 TODO:
-Log and transmit exceptions
-        Almost done! Just need to verify all logging and transmitting
-Startup Transmission + counter
-        Still needs to be implemented
-                Have output file, write to it when script started
-                Every time we reenter the main loop, add an entry
-                Pull out the last entry, send it out on startup
-Buffer radio input:
-        Not really needed - we've cut down the loop iteration time to almost nothing
-Threading:
-        Not really needed, see above
-Clear apt-get cache, delete files, etc
-        Yeah, let's do this
-Test everything, and then we're done with the flight software!
+
 
 """
 
@@ -120,7 +107,7 @@ class balloonScript():
 		self.intervalDuration = 5
 		self.intervalCount = 0
 		self.intervalSnapNumber = 5
-		self.snapRepeat = False
+		self.snapRepeat = True
 
 		self.EXCEPTION_SUM = EXCEPTION_SUM
 		
@@ -157,9 +144,6 @@ class balloonScript():
                         except:
                                 pass
                 log("STARTUP", str(startupNumber + 1))
-                
-		self.sendSerialOutput("init,STARTING_SCRIPT")
-		
 		while(True):
 
                         gpsMessage, validGpsData = self.processGpsData(self.gpsSerialInput())
@@ -168,7 +152,7 @@ class balloonScript():
                         if (validGpsData or validSensorData):
                                 
                                 print('Sending serial out')
-                                self.sendSerialOutput("data," + gpsMessage + sensorData + ',' + str(self.EXCEPTION_SUM))
+				self.sendSerialOutput("data," + gpsMessage + sensorData + ',' + str(self.EXCEPTION_SUM))
 
                         self.EXCEPTION_SUM = 0
 
@@ -180,11 +164,11 @@ class balloonScript():
 
 			log('RADIO', messageReceived)
 
-                        if self.foundCorrectUSB == True and self.sentStartupNumber == False:
+                        if self.foundCorrectUSB and not self.sentStartupNumber:
                                 self.sendSerialOutput("init,STARTING_SCRIPT," + str(startupNumber + 1))
-                                
+                                self.sentStartupNumber = True
 
-                        if self.intervalCount > 0:
+                        if self.intervalCount > 0 and self.snapRepeat == True:
                                 print('entered true')
                                 if (time.time() - self.snapInterval) >= self.intervalDuration:
                                         self.snapShot(self.numberOfPhotosToBurst)
@@ -221,7 +205,7 @@ class balloonScript():
 		except:
 			print("Exception in handling received message")
 			log("RADIO", "Data caused exception: " + str(message))
-			exceptionDictionary('MESSAGE_HANDLING', 10)
+			self.exceptionDictionary('MESSAGE_HANDLING', 10)
 
 	def processCommand(self, command):
 		if (command == "ARM_BRM"):
@@ -231,9 +215,11 @@ class balloonScript():
 		elif (command[:8] == "SNAPSHOT"):
                         commandSplit = command.split(',')
                         try:
-                                if int(commandSplit[2]) == 0:
-                                        self.snapShot(self.numberOfPhotosToBurst)
-                                else:                                 
+                                if int(commandSplit[2]) == -1:
+					self.snapRepeat == False
+                                elif int(commandSplit[2]) == 0:        
+					self.snapShot(int(commandSplit[1]))
+				else:
                                         self.numberOfPhotosToBurst = int(commandSplit[1])
                                         self.intervalDuration = int(commandSplit[2])
                         
@@ -281,7 +267,7 @@ class balloonScript():
 			log("RPI_TEMP", str(VTrpi) + ' ' + calculatedPiTemp)
 		except:
 			validSensorData -= 1
-			exceptionDictionary('TEMP_RPI', 4)
+			self.exceptionDictionary('TEMP_RPI', 4)
 
 		try:
 			rawValExternalTemp = bus.read_byte_data(address, registerText)  # 4599
@@ -291,7 +277,7 @@ class balloonScript():
 			log("EXT_TEMP", str(VText) + ' ' + calculatedExternalTemp)
 		except:
 			validSensorData -= 1
-			exceptionDictionary('TEMP_EXT', 5)
+			self.exceptionDictionary('TEMP_EXT', 5)
 
 		try:
 			rawValBatteryTemp = bus.read_byte_data(address, registerTbat)  # 4600
@@ -301,7 +287,7 @@ class balloonScript():
 			log("BAT_TEMP", str(VTbat) + ' ' + calculatedBatteryTemp)
 		except:
 			validSensorData -= 1
-			exceptionDictionary('TEMP_BAT', 6)
+			self.exceptionDictionary('TEMP_BAT', 6)
 
 		try:
 			rawValBatteryVoltage = bus.read_byte_data(address, registerVbat)
@@ -309,7 +295,7 @@ class balloonScript():
 			log("VOLTAGE", str(rawValBatteryVoltage) + ' ' + calculatedVoltageBattery)
 		except:
 			validSensorData -= 1
-			exceptionDictionary('VOLT_BAT', 7)
+			self.exceptionDictionary('VOLT_BAT', 7)
 
 		try:
 			rawValRH = bus.read_byte_data(address, registerRH)
@@ -319,7 +305,7 @@ class balloonScript():
 			log("HUMIDITY", str(rawValRH) + ' ' + calculatedRHValue)
 		except:
 			validSensorData -= 1
-			exceptionDictionary('RH', 8)
+			self.exceptionDictionary('RH', 8)
 
 		try:
 			rawAccelX = str(bus.read_byte_data(address, registerAccX))
@@ -328,7 +314,7 @@ class balloonScript():
 			log("ACCEL", str(rawAccelX) + ' ' + str(rawAccelY) + ' ' + str(rawAccelZ))
 		except:
 			validSensorData -= 1
-			exceptionDictionary('ACCEL', 9)
+			self.exceptionDictionary('ACCEL', 9)
 
 		return ",{},{},{},{},{},{},{},{}".format(calculatedPiTemp, calculatedExternalTemp,
 							calculatedBatteryTemp, calculatedVoltageBattery,
@@ -410,14 +396,15 @@ class balloonScript():
                                                 print('Line length unexpected - incomplete packet: ' + str(gpsSplit))
                                 except:
                                         print('Format data: no valid GPS string - exception caught')
-                                        exceptionDictionary('LINE_HANDLING', 10)
+                                        self.exceptionDictionary('LINE_HANDLING', 10)
                                         print('offending string: ' + str(gpsString))
                                         formattedGpsString = ",,,"
                                         validGpsData = False
 
                         return formattedGpsString, validGpsData
                 except:
-                        errorDictionary('GPS_HANDLING', 16)
+			self.exceptionDictionary("GPS_HANDLING", 16)
+ 
 	def gpsSerialInput(self):
 		messageReceived = "NO_GPS_DATA\n"
 		serialInput = ""
@@ -447,7 +434,7 @@ class balloonScript():
 					iterationsToWait -= 1
 		except:
 			print("Exception thrown while trying to read GPS serial input")
-			exceptionDictionary('GPS_RECEIVE', 3)
+			self.exceptionDictionary('GPS_RECEIVE', 3)
 			if not (self.foundCorrectUSB):
 				self.switchUSB()  # REVIEW THIS LATER
 
@@ -478,7 +465,7 @@ class balloonScript():
 				print("No serial input to be read from the radio")
 		except:
 			print("Unable to read from radio serial port.")
-			exceptionDictionary('RADIO_RECEIVE', 2)
+			self.exceptionDictionary('RADIO_RECEIVE', 2)
 
 		return serialInput
 
@@ -489,7 +476,7 @@ class balloonScript():
 			self.radioSerialPort.write(RADIO_CALLSIGN + "," + str(line) + ",END_TX\n")
 		except:
 			print("Unable to write to radio serial port on " + self.RADIO_SERIAL_PORT)
-			exceptionDictionary('RADIO_TRANSMIT', 1)
+			self.exceptionDictionary('RADIO_TRANSMIT', 1)
 
 	def openRadioSerialPort(self):
 		try:
@@ -536,7 +523,7 @@ class balloonScript():
 					GPIO.output(23, 1)
 				except:
 					print("Unable to start recording!")
-					exceptionDictionary('VIDEO_RECORD', 11)
+					self.exceptionDictionary('VIDEO_RECORD', 11)
 
 			GPIO.output(23, 1)
 
@@ -551,7 +538,7 @@ class balloonScript():
 		except:
 			log("SCRIPT", "Unable to release the balloon. Unknown exception occurred")
 			self.radioSerialOutput("error,release_balloon_cmd_failed")
-			exceptionDictionary('BALLOON_RELEASE', 12)
+			self.exceptionDictionary('BALLOON_RELEASE', 12)
 
 
 	def brmReset(self):
@@ -565,7 +552,7 @@ class balloonScript():
 			self.balloonReleaseActivated = False
 
 		except:
-			exceptionDictionary('BRM_RESET', 13)
+			self.exceptionDictionary('BRM_RESET', 13)
 
 
 
@@ -600,7 +587,7 @@ class balloonScript():
 
 		except:
 			print('taking pictures, encountered exception')
-			exceptionDictionary('SNAPSHOT', 0)
+			self.exceptionDictionary('SNAPSHOT', 0)
 
 	def recordVideo(self, duration):
                 try:
@@ -625,7 +612,7 @@ class balloonScript():
                         else:
                                 print("Cannot record video - still recording video for the next " + str(timeLeftToRecord) + ' seconds')
                 except:
-                        exceptionDictionary('VIDEO_RECORD',11)
+                        self.exceptionDictionary('VIDEO_RECORD',11)
 	def switchUSB(self):
 		try:
 			if self.RADIO_SERIAL_PORT == "/dev/ttyUSB1":
@@ -644,76 +631,29 @@ class balloonScript():
 			self.openRadioSerialPort()
 			self.openGpsSerialPort()
 		except:
-			exceptionDictionary('SWITCH_USB', 14)
+			self.exceptionDictionary('SWITCH_USB', 14)
 
 	def getDiskSpace(self):
 		output = subprocess.check_output(['df', '-h'])
 		return str(output.split()[10])
+
+	def exceptionDictionary(self, error, bitShifter):
+		try:
+			log("EXCEPTION", exceptionList[str(error)])
+			self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << int(bitShifter))
+			print("in try")
+		except:
+			log("EXCEPTION", 'Exception while attempting to find exception')
+			print('in except')
+
+
+
 
 def log(type, line):
 	logFile = open(logFileLocationDictionary[type], 'a')
 
 	logFile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ": " + line + "\n")
 	logFile.close
-
-def errorDictionary(error, message):
-	if error == "SNAPSHOT":
-		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << 0)
-		log("EXCEPTION", message)
-	elif error == "RADIO_TRANSMIT":
-		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << 1)
-		log("EXCEPTION", message)
-	elif error == "RADIO_RECEIVE":
-		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << 2)
-		log("EXCEPTION", message)
-	elif error == "GPS_RECEIVE":
-		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 3)
-		log("EXCEPTION", message)
-	elif error == "TEMP_RPI":
-		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 4)
-		log("EXCEPTION", message)
-	elif error == "TEMP_EXT":
-		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 5)
-		log("EXCEPTION", message)
-	elif error == "TEMP_BAT":
-		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 6)
-		log("EXCEPTION", message)
-	elif error == "VOLT_BAT":
-		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 7)
-		log("EXCEPTION", message)
-	elif error == "RH":
-		self.EXCEPTION_SUM = EXCEPTION_SUM + (1 << 8)
-		log("EXCEPTION", message)
-	elif error == "ACCEL":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 9)
-		log("EXCEPTION", message)
-	elif error == "MESSAGE_HANDLING":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 10)
-		log("EXCEPTION", message)
-	elif error == "VIDEO_RECORD":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 11)
-		log("EXCEPTION", message)
-	elif error == "BALLOON_RELEASE":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 12)
-		log("EXCEPTION", message)
-	elif error == "BRM_RESET":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 13)
-		log("EXCEPTION", message)
-	elif error == "USB_SWITCH":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 14)
-		log("EXCEPTION", message)
-	elif error == "UNKNOWN":
-		EXCEPTION_SUM = EXCEPTION_SUM + (1 << 15)
-		log("EXCEPTION", message)
-	else:
-		log("EXCEPTION", 'Error while receiving error')
-
-def exceptionDictionary(error, bitShifter):
-	try:
-		log("EXCEPTION", exceptionList[str(error)])
-		self.EXCEPTION_SUM = self.EXCEPTION_SUM + (1 << int(bitShifter))
-	except:
-		log("EXCEPTION", 'Exception while attempting to find exception')
 
 if __name__ == '__main__':
         EXCEPTION_SUM = 0
@@ -722,6 +662,5 @@ if __name__ == '__main__':
 		try:
 			runScript = balloonScript(EXCEPTION_SUM)
 		except:
-			errorDictionary("MAIN_SCRIPT", 15)
 			print("\n\nProgram terminated, starting again\n\n")
 			time.sleep(5)
